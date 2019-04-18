@@ -23,3 +23,7 @@ The folowing execution order must be respected.
 7. The client show the Models having the textures.
 8. You close the Client
 9. You close the Server (optional).
+
+![JUnit test][JUnitTest]
+
+[JUnitTest]: https://raw.githubusercontent.com/enexusde/VRServer/master/vrclientscreenshot.jpg "JUnit test"
