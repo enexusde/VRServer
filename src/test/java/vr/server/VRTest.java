@@ -1,23 +1,23 @@
+/*  _    ______   _____ Copyright GPL by Peter Rader 2019                          
+ * | |  / / __ \ / ___/___  ______   _____  _____
+ * | | / / /_/ / \__ \/ _ \/ ___/ | / / _ \/ ___/
+ * | |/ / _, _/ ___/ /  __/ /   | |/ /  __/ /    
+ * |___/_/ |_| /____/\___/_/    |___/\___/_/     
+ */
 package vr.server;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
-import java.net.URL;
-import java.util.Random;
-import java.util.logging.Logger;
 
 import de.e_nexus.vr.server.VRServer;
 import de.e_nexus.vr.server.listeners.VRClientRequestAppInfo;
 import de.e_nexus.vr.server.listeners.VRClientStatusListener;
 import de.e_nexus.vr.server.listeners.VRExceptionListener;
 import de.e_nexus.vr.server.mesh.Mesh;
-import de.e_nexus.vr.server.mesh.Triangle;
 import de.e_nexus.vr.server.mesh.UVVector;
-import de.e_nexus.vr.server.mesh.tex.Texture;
 import de.e_nexus.vr.server.mesh.tex.TextureStage;
 import de.e_nexus.vr.server.mesh.tex.URLTexture;
-import de.e_nexus.vr.server.util.NumberTools;
 
 public class VRTest {
 	public void testVR() throws IOException, InterruptedException {

@@ -1,3 +1,9 @@
+/*  _    ______   _____ Copyright GPL by Peter Rader 2019                          
+ * | |  / / __ \ / ___/___  ______   _____  _____
+ * | | / / /_/ / \__ \/ _ \/ ___/ | / / _ \/ ___/
+ * | |/ / _, _/ ___/ /  __/ /   | |/ /  __/ /    
+ * |___/_/ |_| /____/\___/_/    |___/\___/_/     
+ */
 package de.e_nexus.vr.server.mesh.tex;
 
 import java.io.IOException;
@@ -69,7 +75,7 @@ public class MeshTextureInfoInputStream extends InputStream {
 			while (in.available() < 4 && --triesLeft > 0) {
 				LOG.finer("Not enougth bytes available, wait a short time.");
 				try {
-					int max = Math.max(10, triesLeft)*10;
+					int max = Math.max(10, triesLeft) * 10;
 					LOG.finest("Wait " + max + " miliseconds until look if enougth bytes availale.");
 					Thread.sleep(max);
 				} catch (InterruptedException e) {

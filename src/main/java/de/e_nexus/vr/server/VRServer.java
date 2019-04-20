@@ -1,3 +1,9 @@
+/*  _    ______   _____ Copyright GPL by Peter Rader 2019                          
+ * | |  / / __ \ / ___/___  ______   _____  _____
+ * | | / / /_/ / \__ \/ _ \/ ___/ | / / _ \/ ___/
+ * | |/ / _, _/ ___/ /  __/ /   | |/ /  __/ /    
+ * |___/_/ |_| /____/\___/_/    |___/\___/_/     
+ */
 package de.e_nexus.vr.server;
 
 import java.io.ByteArrayOutputStream;
@@ -165,7 +171,7 @@ public class VRServer extends ServerSocket {
 			if (read == -1) {
 				// log("Closed unexpectedly " + in.available());
 			} else {
-				Client2ServerCode code = Client2ServerCode.read(read);
+				Client2ServerCode code = Client2ServerCode.values()[read];
 				switch (code) {
 				case GET_APP_INFO:
 					StringBuilder sb = new StringBuilder();
@@ -186,7 +192,7 @@ public class VRServer extends ServerSocket {
 						MeshOutputStream mos = new MeshOutputStream(buff);
 						mos.writeMesh(mesh);
 						mos.flush();
-						//dumpToConsole(buff);
+						// dumpToConsole(buff);
 						outLenString(out, buff.size() + "");
 						out.write(buff.toByteArray());
 						MeshTexturesOutputStream tos = new MeshTexturesOutputStream(out);
@@ -197,8 +203,6 @@ public class VRServer extends ServerSocket {
 						mtis.readTextureIndexes(mesh);
 					}
 					out.flush();
-				default:
-					break;
 				}
 			}
 			s.close();

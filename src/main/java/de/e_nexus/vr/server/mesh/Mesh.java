@@ -1,3 +1,9 @@
+/*  _    ______   _____ Copyright GPL by Peter Rader 2019                          
+ * | |  / / __ \ / ___/___  ______   _____  _____
+ * | | / / /_/ / \__ \/ _ \/ ___/ | / / _ \/ ___/
+ * | |/ / _, _/ ___/ /  __/ /   | |/ /  __/ /    
+ * |___/_/ |_| /____/\___/_/    |___/\___/_/     
+ */
 package de.e_nexus.vr.server.mesh;
 
 import java.util.ArrayList;
@@ -45,7 +51,7 @@ import de.e_nexus.vr.server.mesh.tex.TexturesHolder;
  * have two additional vertices at the same location to solve the uniqueness of
  * coordinates in a tetraeder.
  * 
- * @param <T>
+ * @param <T> The type of vectors a support.
  */
 public class Mesh<T extends Vector> extends TexturesHolder {
 
@@ -58,8 +64,8 @@ public class Mesh<T extends Vector> extends TexturesHolder {
 	 * You need at least 3 points for an {@link Triangle triangle}. Notice that a
 	 * minimum of 3 points is required to paint an object in 3D.
 	 * 
-	 * @param v
-	 * @return
+	 * @param v The vector to add, never <code>null</code>.
+	 * @return The index the vector is placed in the mesh, never negative.
 	 */
 	public int addVector(T v) {
 		vectors.add(v);
@@ -97,6 +103,7 @@ public class Mesh<T extends Vector> extends TexturesHolder {
 	/**
 	 * Adds a square (containing two triangles) in anti-clockwise order.
 	 * <table>
+	 * <caption>Model:</caption>
 	 * <tr>
 	 * <td>c</td>
 	 * <td>-</td>
