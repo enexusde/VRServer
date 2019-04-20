@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 
 import de.e_nexus.vr.server.mesh.tex.MeshTexturesOutputStream;
 
-public class MeshOutputStream<T extends Vector> extends BigEndianOutputStream {
+public class MeshOutputStream<T extends Vector> extends LittleEndianOutputStream {
 
 	private static final byte MUST_NORMALIZE_FLAG = (byte) 1;
 	private static final byte TWO_COMPONENTS = (byte) 2;
@@ -53,14 +53,14 @@ public class MeshOutputStream<T extends Vector> extends BigEndianOutputStream {
 		for (T t : vectors) {
 			LOG.fine("Write a vector of mesh " + mesh + ".");
 			LOG.finest("Writing vector " + t.x + "x" + t.y + "x" + t.z + ".");
-			writeBigEndian(t.x);
-			writeBigEndian(t.y);
-			writeBigEndian(t.z);
+			writeLittleEndian(t.x);
+			writeLittleEndian(t.y);
+			writeLittleEndian(t.z);
 			if (allHaveNormals) {
 				NormalVector nv = (NormalVector) t;
-				writeBigEndian(nv.normalX);
-				writeBigEndian(nv.normalY);
-				writeBigEndian(nv.normalZ);
+				writeLittleEndian(nv.normalX);
+				writeLittleEndian(nv.normalY);
+				writeLittleEndian(nv.normalZ);
 
 			}
 
@@ -69,8 +69,8 @@ public class MeshOutputStream<T extends Vector> extends BigEndianOutputStream {
 				LOG.finest("Write a texture coordinte " + e.uvX + "x" + e.uvY
 						+ " (factor from left border of image 'x' factor from upper border of image) of mesh " + mesh
 						+ ".");
-				writeBigEndian(e.uvX);
-				writeBigEndian(e.uvY);
+				writeLittleEndian(e.uvX);
+				writeLittleEndian(e.uvY);
 			} else {
 				LOG.fine("No texture inforemations available for this vector.");
 			}
@@ -79,9 +79,9 @@ public class MeshOutputStream<T extends Vector> extends BigEndianOutputStream {
 
 	private void writeIndexData(Mesh<T> m) throws IOException {
 		for (Triangle t : m.polygons) {
-			writeBigEndian(t.indiceA);
-			writeBigEndian(t.indiceB);
-			writeBigEndian(t.indiceC);
+			writeLittleEndian(t.indiceA);
+			writeLittleEndian(t.indiceB);
+			writeLittleEndian(t.indiceC);
 		}
 	}
 
@@ -108,12 +108,12 @@ public class MeshOutputStream<T extends Vector> extends BigEndianOutputStream {
 
 	private void write6_offsetIndexData(Mesh<T> m, boolean isUv, boolean allHaveNormals) throws IOException {
 		int vectorPayloadSize = m.vectors.size() * calculateSingleVertexSize(isUv, allHaveNormals);
-		writeBigEndian(calculateRawVertexDataOffset(isUv) + vectorPayloadSize);// ??
+		writeLittleEndian(calculateRawVertexDataOffset(isUv) + vectorPayloadSize);// ??
 	}
 
 	private void write5_offsetRawVertexData(Mesh m, boolean isUv, boolean allHaveNormals) throws IOException {
 		int calculateRawVertexDataOffset = calculateRawVertexDataOffset(isUv);
-		writeBigEndian(calculateRawVertexDataOffset);
+		writeLittleEndian(calculateRawVertexDataOffset);
 	}
 
 	private int calculateRawVertexDataOffset(boolean isUv) {
@@ -129,7 +129,7 @@ public class MeshOutputStream<T extends Vector> extends BigEndianOutputStream {
 	}
 
 	private void write4_sizeOfSingleVertexInBytes(Mesh m, boolean isUv, boolean allHaveNormals) throws IOException {
-		writeBigEndian(calculateSingleVertexSize(isUv, allHaveNormals));
+		writeLittleEndian(calculateSingleVertexSize(isUv, allHaveNormals));
 	}
 
 	private int calculateSingleVertexSize(boolean isUv, boolean allHaveNormals) {
@@ -140,15 +140,15 @@ public class MeshOutputStream<T extends Vector> extends BigEndianOutputStream {
 	}
 
 	private void write3_NumberOfAttributes(Mesh m, boolean allHaveNormals) throws IOException {
-		writeBigEndian(allHaveNormals ? 3 : 2);
+		writeLittleEndian(allHaveNormals ? 3 : 2);
 
 	}
 
 	private void write2_CountIndices(Mesh m) throws IOException {
-		writeBigEndian(m.polygons.size() * 3);
+		writeLittleEndian(m.polygons.size() * 3);
 	}
 
 	private void write1_CountVertices(Mesh m) throws IOException {
-		writeBigEndian(m.vectors.size());
+		writeLittleEndian(m.vectors.size());
 	}
 }

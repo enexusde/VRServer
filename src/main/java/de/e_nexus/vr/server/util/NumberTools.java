@@ -10,7 +10,7 @@ public class NumberTools {
 
 	private final static Logger LOG = Logger.getLogger(NumberTools.class.getCanonicalName());
 
-	public static byte[] toByteArrayBigEndian(int number) {
+	public static byte[] toByteArrayLittleEndian(int number) {
 		byte[] memoryBlock = new byte[4];
 		memoryBlock[0] = (byte) (number & 0xFF);
 		memoryBlock[1] = (byte) ((number >> 8) & 0xFF);
@@ -19,7 +19,7 @@ public class NumberTools {
 		return memoryBlock;
 	}
 
-	public static byte[] toByteArrayBigEndian(float value) {
+	public static byte[] toByteArrayLittleEndian(float value) {
 		ByteBuffer allocate = ByteBuffer.allocate(4);
 		byte[] array = allocate.putFloat(value).order(ByteOrder.BIG_ENDIAN).array();
 		return new byte[] { array[3], array[2], array[1], array[0] };
@@ -50,7 +50,7 @@ public class NumberTools {
 		// 0 byte in java = 0 byte in agk
 		// -127 byte in java =129 byte in agk
 
-		printbytes(toByteArrayBigEndian(5f));
+		printbytes(toByteArrayLittleEndian(5f));
 	}
 
 	public static String byteToString(byte b) {

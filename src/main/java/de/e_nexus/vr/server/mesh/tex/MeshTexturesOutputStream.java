@@ -5,11 +5,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.logging.Logger;
 
-import de.e_nexus.vr.server.mesh.BigEndianOutputStream;
+import de.e_nexus.vr.server.mesh.LittleEndianOutputStream;
 import de.e_nexus.vr.server.mesh.Mesh;
 import de.e_nexus.vr.server.mesh.Vector;
 
-public class MeshTexturesOutputStream<T extends Vector> extends BigEndianOutputStream {
+public class MeshTexturesOutputStream<T extends Vector> extends LittleEndianOutputStream {
 
 	private final static Logger LOG = Logger.getLogger(MeshTexturesOutputStream.class.getCanonicalName());
 
@@ -39,12 +39,12 @@ public class MeshTexturesOutputStream<T extends Vector> extends BigEndianOutputS
 				write((byte) stage.ordinal());
 				LOG.finest("Transport width of " + width + " and height of " + height + " of the new texture for mesh "
 						+ mesh + " to VR client.");
-				writeBigEndian(width);
-				writeBigEndian(height);
+				writeLittleEndian(width);
+				writeLittleEndian(height);
 				LOG.finest("Start transportation of memblock to VR client.");
-				writeBigEndian(width);
-				writeBigEndian(height);
-				writeBigEndian(32);
+				writeLittleEndian(width);
+				writeLittleEndian(height);
+				writeLittleEndian(32);
 				InputStream in = texture.createDataStream();
 				int bytesLeft = width * height * 4;
 				byte[] buff;
@@ -64,7 +64,7 @@ public class MeshTexturesOutputStream<T extends Vector> extends BigEndianOutputS
 				LOG.finest("Sending exists for stage " + stage + ".");
 				write((byte) stage.ordinal());
 				LOG.finest("Sending imageId " + texture.getId() + " to VR client.");
-				writeBigEndian(texture.getId());
+				writeLittleEndian(texture.getId());
 				LOG.finest("All reference informations are written for stage " + stage + " of mesh " + mesh + ".");
 			}
 			LOG.finest("Flushing the output.");

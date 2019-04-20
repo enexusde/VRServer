@@ -49,7 +49,7 @@ public class VRTest {
 		mesh.setTexture(TextureStage.DIFFUSE, grid);
 		for (float x = -20; x < 20; x++) {
 			for (float y = -20; y < 20; y++) {
-				mesh.addBlock(x, 1f, y, 0.5f, 0.2f);
+				mesh.addCube(x, 1f, y, 0.5f, 0.2f);
 			}
 		}
 		r.addMesh(mesh);
