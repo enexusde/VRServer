@@ -42,20 +42,20 @@ public class PixelOutputStream extends InputStream {
 		case R:
 			currentField = Field.G;
 			// 0 means no red, 255 means full red.
-			return 255 - colorModel.getRed(pixel);
+			return colorModel.getRed(pixel);
 		case G:
 			currentField = Field.B;
 			// 0 means no green, 255 means full green.
-			return 255 - colorModel.getGreen(pixel);
+			return colorModel.getGreen(pixel);
 		case B:
 			currentField = Field.A;
 			// 0 means no blue, 255 means full blue.
-			return 255 - colorModel.getBlue(pixel);
+			return colorModel.getBlue(pixel);
 		case A:
 			currentField = Field.R;
 			next();
 			// 0 is invisible, 255 means no transparency
-			return 255 - colorModel.getAlpha(pixel);
+			return colorModel.getAlpha(pixel);
 		default:
 			throw new RuntimeException("Illegal field: " + currentField);
 		}
