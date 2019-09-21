@@ -32,7 +32,7 @@ public interface Texture {
 	 * texture is not load! Vice versa: if the id is not <code>null</code>, the
 	 * texture is compleatly load by the client.
 	 * 
-	 * @return
+	 * @return The bound id in the VR client.
 	 */
 	Integer getId();
 
@@ -64,7 +64,7 @@ public interface Texture {
 	/**
 	 * Should only be used by {@link MeshTextureInfoInputStream}.
 	 * 
-	 * @param id
+	 * @param id Set the bound id in the VR client.
 	 */
 	void setId(int id);
 }

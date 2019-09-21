@@ -7,6 +7,7 @@
 package de.e_nexus.vr.server.mesh.tex;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -61,7 +62,6 @@ public class URLTexture implements Texture {
 	public InputStream createDataStream() {
 		try {
 			BufferedImage i = reader.read(0);
-			System.out.println(i.isAlphaPremultiplied() + "i=" + i);
 			return new PixelOutputStream(i.getRaster(), i.getColorModel(), getWidth());
 		} catch (IOException e) {
 			throw new RuntimeException("URL " + url + " not available anymore!");

@@ -9,10 +9,23 @@ package de.e_nexus.vr.server.mesh.tex;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * Holds the textures for every layer.
+ */
 public class TexturesHolder {
+	/**
+	 * The textures bound.
+	 */
 	protected final Map<TextureStage, Texture> textures = new LinkedHashMap<TextureStage, Texture>();
 
-	public void setTexture(TextureStage stage, Texture t) {
-		textures.put(stage, t);
+	/**
+	 * Set a texture (bound or unbound in the VR client). Override the texture if
+	 * exists.
+	 * 
+	 * @param stage   The supported stage, never <code>null</code>.
+	 * @param texture The texture.
+	 */
+	public void setTexture(TextureStage stage, Texture texture) {
+		textures.put(stage, texture);
 	}
 }
