@@ -68,6 +68,8 @@ public class MeshTextureInfoInputStream extends InputStream {
 	}
 
 	public void readTextureIndexes(Mesh<?> m) throws IOException {
+		int nativeOID = NumberTools.readByteArrayBigEndian(in);
+		m.setId(nativeOID);
 		LOG.fine("Read texture indexes from client.");
 		for (TextureStage s : TextureStage.values()) {
 			int triesLeft = 30;

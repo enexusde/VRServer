@@ -55,8 +55,21 @@ import de.e_nexus.vr.server.mesh.tex.TexturesHolder;
  */
 public class Mesh<T extends Vector> extends TexturesHolder {
 
+	/**
+	 * The vectors representing the mesh.
+	 */
 	protected final List<T> vectors = new ArrayList<T>();
+
+	/**
+	 * The polygons in the mesh.
+	 */
 	protected final Set<Triangle> polygons = new LinkedHashSet<Triangle>();
+
+	/**
+	 * The id of the mesh. Used to be the object-id in the VR client.
+	 * <code>null</code> if the mesh is not available to the client.
+	 */
+	protected Integer nativeOID;
 
 	/**
 	 * Add an 3 dimensional point (aka vector or vertex) to the Mesh.
@@ -191,6 +204,21 @@ public class Mesh<T extends Vector> extends TexturesHolder {
 		return m;
 	}
 
+	public Mesh<T> cloneRotateHorizontal(Vector aroundPoint, double rotateHorizontalRadians) {
+		Mesh<T> m = new Mesh<T>();
+		for (T t : vectors) {
+			m.addVector((T) t.cloneRotateHorizontal(aroundPoint, rotateHorizontalRadians));
+		}
+		for (Triangle triangle : polygons) {
+			m.addTriangle(triangle);
+		}
+		for (TextureStage stage : textures.keySet()) {
+			m.setTexture(stage, textures.get(stage));
+		}
+		return m;
+
+	}
+
 	/**
 	 * Adds an cube using conclusive normal mappings over the complete size of the
 	 * texture.
@@ -225,4 +253,32 @@ public class Mesh<T extends Vector> extends TexturesHolder {
 		addSquareCounterClockwise(a, b, f, e);
 	}
 
+	/**
+	 * Set the id of the mesh.
+	 * 
+	 * <p>
+	 * Internally it is used to be the object-id.
+	 * 
+	 * @param meshId The mesh's identifier in the VR client.
+	 * @deprecated Only the VR client is allowed to give authentic values.
+	 */
+	@Deprecated
+	public void setId(int meshId) {
+		this.nativeOID = meshId;
+	}
+
+	public Mesh<T> cloneRotateClockwise(Vector aroundPoint, double rotateHorizontalRadians) {
+		Mesh<T> m = new Mesh<T>();
+		for (T t : vectors) {
+			m.addVector((T) t.cloneRotateClockwise(aroundPoint, rotateHorizontalRadians));
+		}
+		for (Triangle triangle : polygons) {
+			m.addTriangle(triangle);
+		}
+		for (TextureStage stage : textures.keySet()) {
+			m.setTexture(stage, textures.get(stage));
+		}
+		return m;
+
+	}
 }

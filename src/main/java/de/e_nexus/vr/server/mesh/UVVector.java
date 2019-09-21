@@ -71,4 +71,20 @@ public class UVVector extends NormalVector {
 	public Vector cloneMoved(float x2, float y2, float z2) {
 		return new UVVector(x + x2, y + y2, z + z2, normalX, normalY, normalZ, uvX, uvY);
 	}
+
+	@Override
+	public UVVector cloneRotateHorizontal(Vector aroundVector, double rotateHorizontalRadians) {
+		float ny = (float) (Math.cos(rotateHorizontalRadians) * (aroundVector.y - y)
+				- Math.sin(rotateHorizontalRadians) * z);
+		float nz = (float) (Math.sin(rotateHorizontalRadians) * (aroundVector.y - y)
+				+ Math.cos(rotateHorizontalRadians) * z);
+		return new UVVector(x, ny, nz, normalX, normalY, normalZ, uvX, uvY);
+	}
+
+	@Override
+	public UVVector cloneRotateClockwise(Vector mid, double rad) {
+		double nRight = Math.cos(rad) * (mid.x - x) - Math.sin(rad) * x;
+		double nUp = Math.sin(rad) * (mid.z - z) + Math.cos(rad) * y;
+		return new UVVector((float) nRight, (float) nUp, z, uvX, uvY, normalX, normalY, normalZ);
+	}
 }

@@ -6,6 +6,9 @@
  */
 package de.e_nexus.vr.server.mesh;
 
+import java.awt.Point;
+import java.awt.geom.AffineTransform;
+
 /**
  * A vector represents one point that is absolute by default in a three
  * dimensional world.
@@ -45,15 +48,15 @@ public class Vector {
 
 	/**
 	 * 
-	 * @param x Meter to the side.
-	 * @param y Meter from ground up to the point. Negative values may under the
-	 *          floor.
-	 * @param z Meter forward.
+	 * @param right   Meter to the side.
+	 * @param up      Meter from ground up to the point. Negative values may under
+	 *                the floor.
+	 * @param forward Meter forward.
 	 */
-	public Vector(float x, float y, float z) {
-		this.x = x;
-		this.y = y;
-		this.z = z;
+	public Vector(float right, float up, float forward) {
+		this.x = right;
+		this.y = up;
+		this.z = forward;
 	}
 
 	/**
@@ -119,5 +122,19 @@ public class Vector {
 
 	public Vector cloneMoved(float x2, float y2, float z2) {
 		return new Vector(x + x2, y + y2, z + z2);
+	}
+
+	public Vector cloneRotateHorizontal(Vector aroundVector, double rotateHorizontalRadians) {
+		float ny = (float) (Math.cos(rotateHorizontalRadians) * (aroundVector.y - y)
+				- Math.sin(rotateHorizontalRadians) * z);
+		float nz = (float) (Math.sin(rotateHorizontalRadians) * (aroundVector.y - y)
+				+ Math.cos(rotateHorizontalRadians) * z);
+		return new Vector(x, ny, nz);
+	}
+
+	public Vector cloneRotateClockwise(Vector mid, double rad) {
+		double nRight = Math.cos(rad) * (mid.x - x) - Math.sin(rad) * x;
+		double nUp = Math.sin(rad) * (mid.z - z) + Math.cos(rad) * y;
+		return new Vector((float) nRight, (float) nUp, z);
 	}
 }

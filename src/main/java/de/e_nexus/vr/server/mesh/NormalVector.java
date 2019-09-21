@@ -20,4 +20,20 @@ public class NormalVector extends Vector {
 		this.normalY = normalY;
 		this.normalZ = normalZ;
 	}
+
+	@Override
+	public NormalVector cloneRotateHorizontal(Vector aroundVector, double rotateHorizontalRadians) {
+		float ny = (float) (Math.cos(rotateHorizontalRadians) * (aroundVector.y - y)
+				- Math.sin(rotateHorizontalRadians) * z);
+		float nz = (float) (Math.sin(rotateHorizontalRadians) * (aroundVector.y - y)
+				+ Math.cos(rotateHorizontalRadians) * z);
+		return new NormalVector(x, ny, nz, normalX, normalY, normalZ);
+	}
+
+	@Override
+	public NormalVector cloneRotateClockwise(Vector mid, double rad) {
+		double nRight = Math.cos(rad) * (mid.x - x) - Math.sin(rad) * x;
+		double nUp = Math.sin(rad) * (mid.z - z) + Math.cos(rad) * y;
+		return new NormalVector((float) nRight, (float) nUp, z, normalX, normalY, normalZ);
+	}
 }
