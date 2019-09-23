@@ -64,12 +64,13 @@ public class UVVector extends NormalVector {
 		float distX = scale(centerX, x, factor);
 		float distY = scale(centerY, y, factor);
 		float distZ = scale(centerZ, z, factor);
-		UVVector f = new UVVector(x + distX, y + distY, z + distZ, normalX, normalY, normalZ, uvX, uvY);
+		UVVector f = new UVVector(x + distX, y + distY, z + distZ, uvX, uvY, normalX, normalY, normalZ);
 		return f;
 	}
 
-	public Vector cloneMoved(float x2, float y2, float z2) {
-		return new UVVector(x + x2, y + y2, z + z2, normalX, normalY, normalZ, uvX, uvY);
+	public UVVector cloneMoved(float x, float y, float z) {
+		UVVector uvVector = new UVVector(this.x + x, this.y + y, this.z + z, uvX, uvY, normalX, normalY, normalZ);
+		return uvVector;
 	}
 
 	@Override

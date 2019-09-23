@@ -38,6 +38,14 @@ public class NumberTools {
 		allocate.put(array);
 		return allocate.getInt(0);
 	}
+	
+	public static float readByteArrayBigEndianFloat(InputStream is) throws IOException {
+		byte[] array = { (byte) is.read(), (byte) is.read(), (byte) is.read(), (byte) is.read() };
+		ByteBuffer allocate = ByteBuffer.allocate(4);
+		allocate.order(ByteOrder.LITTLE_ENDIAN);
+		allocate.put(array);
+		return allocate.getFloat(0);
+	}
 
 	public static void printbytes(byte[] fd) {
 		int index = 0;

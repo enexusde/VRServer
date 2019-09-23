@@ -7,5 +7,5 @@
 package de.e_nexus.vr.server.codes;
 
 public enum Client2ServerCode {
-	GET_APP_INFO, GET_INCOMING_MESH
+	GET_APP_INFO, GET_INCOMING_MESH, SEND_HELMET_AND_CONTROLLER_INFO
 }

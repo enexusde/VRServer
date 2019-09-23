@@ -6,9 +6,6 @@
  */
 package de.e_nexus.vr.server.mesh;
 
-import java.awt.Point;
-import java.awt.geom.AffineTransform;
-
 /**
  * A vector represents one point that is absolute by default in a three
  * dimensional world.

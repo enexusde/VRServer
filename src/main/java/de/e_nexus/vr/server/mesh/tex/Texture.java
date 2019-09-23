@@ -32,7 +32,8 @@ public interface Texture {
 	 * texture is not load! Vice versa: if the id is not <code>null</code>, the
 	 * texture is compleatly load by the client.
 	 * 
-	 * @return The bound id in the VR client.
+	 * @return The bound id in the VR client or <code>null</code> if the texture is
+	 *         not present in the client.
 	 */
 	Integer getId();
 

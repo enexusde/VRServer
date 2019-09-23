@@ -146,6 +146,12 @@ public class Mesh<T extends Vector> extends TexturesHolder {
 		return this;
 	}
 
+	public Mesh<T> addSquareClockwiseDoublesided(int a, int d, int c, int b) {
+		addTriangleCounterClockwise(a, c, d);
+		addTriangleCounterClockwise(a, b, c);
+		return this;
+	}
+
 	/**
 	 * Clones the current mesh to a specific scale. Does not clone the texture.
 	 * 

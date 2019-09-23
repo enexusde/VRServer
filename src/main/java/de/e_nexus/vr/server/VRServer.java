@@ -23,6 +23,7 @@ import de.e_nexus.vr.server.codes.Client2ServerCode;
 import de.e_nexus.vr.server.listeners.VRClientRequestAppInfo;
 import de.e_nexus.vr.server.listeners.VRClientStatusListener;
 import de.e_nexus.vr.server.listeners.VRExceptionListener;
+import de.e_nexus.vr.server.listeners.interaction.HelmetAndControllerInfo;
 import de.e_nexus.vr.server.mesh.Mesh;
 import de.e_nexus.vr.server.mesh.MeshOutputStream;
 import de.e_nexus.vr.server.mesh.tex.MeshTextureInfoInputStream;
@@ -181,6 +182,38 @@ public class VRServer extends ServerSocket {
 					outLenString(out, sb.toString());
 					break;
 
+				case SEND_HELMET_AND_CONTROLLER_INFO: {
+					float helmetX = NumberTools.readByteArrayBigEndian(in);
+					float helmetY = NumberTools.readByteArrayBigEndian(in);
+					float helmetZ = NumberTools.readByteArrayBigEndian(in);
+					float helmetAngleX = NumberTools.readByteArrayBigEndian(in);
+					float helmetAngleY = NumberTools.readByteArrayBigEndian(in);
+					float helmetAngleZ = NumberTools.readByteArrayBigEndian(in);
+					float lhX = NumberTools.readByteArrayBigEndian(in);
+					float lhY = NumberTools.readByteArrayBigEndian(in);
+					float lhZ = NumberTools.readByteArrayBigEndian(in);
+					float lhrX = NumberTools.readByteArrayBigEndian(in);
+					float lhrY = NumberTools.readByteArrayBigEndian(in);
+					float lhrZ = NumberTools.readByteArrayBigEndian(in);
+
+					float rhX = NumberTools.readByteArrayBigEndian(in);
+					float rhY = NumberTools.readByteArrayBigEndian(in);
+					float rhZ = NumberTools.readByteArrayBigEndian(in);
+					float rhrX = NumberTools.readByteArrayBigEndian(in);
+					float rhrY = NumberTools.readByteArrayBigEndian(in);
+					float rhrZ = NumberTools.readByteArrayBigEndian(in);
+					int lcs = in.read();
+					int rcs = in.read();
+					float ltx = NumberTools.readByteArrayBigEndian(in);
+					float lty = NumberTools.readByteArrayBigEndian(in);
+					float rtx = NumberTools.readByteArrayBigEndian(in);
+					float rty = NumberTools.readByteArrayBigEndian(in);
+					HelmetAndControllerInfo haci = new HelmetAndControllerInfo(helmetX, helmetY, helmetZ, helmetAngleX,
+							helmetAngleY, helmetAngleZ, lhX, lhY, lhZ, lhrX, lhrY, lhrZ, rhX, rhY, rhZ, rhrX, rhrY,
+							rhrZ, (byte) lcs, (byte) rcs, ltx, lty, rtx, rty);
+
+					System.out.println(haci);
+				}
 				case GET_INCOMING_MESH:
 					int count = Math.min(toSend.size(), 100);
 					out.write(count);
