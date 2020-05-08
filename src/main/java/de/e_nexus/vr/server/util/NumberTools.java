@@ -38,9 +38,13 @@ public class NumberTools {
 		allocate.put(array);
 		return allocate.getInt(0);
 	}
-	
+
 	public static float readByteArrayBigEndianFloat(InputStream is) throws IOException {
 		byte[] array = { (byte) is.read(), (byte) is.read(), (byte) is.read(), (byte) is.read() };
+		return getByxteArrayBigEndianFloat(array);
+	}
+
+	private static float getByxteArrayBigEndianFloat(byte[] array) {
 		ByteBuffer allocate = ByteBuffer.allocate(4);
 		allocate.order(ByteOrder.LITTLE_ENDIAN);
 		allocate.put(array);
@@ -60,11 +64,7 @@ public class NumberTools {
 	}
 
 	public static void main(String[] args) {
-
-		// 0 byte in java = 0 byte in agk
-		// -127 byte in java =129 byte in agk
-
-		printbytes(toByteArrayLittleEndian(5f));
+		System.out.println("-----------sdf" + getByxteArrayBigEndianFloat(new byte[] { 84, 1, 4, 64 }));
 	}
 
 	public static String byteToString(byte b) {

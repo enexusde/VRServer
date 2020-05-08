@@ -183,36 +183,36 @@ public class VRServer extends ServerSocket {
 					break;
 
 				case SEND_HELMET_AND_CONTROLLER_INFO: {
-					float helmetX = NumberTools.readByteArrayBigEndian(in);
-					float helmetY = NumberTools.readByteArrayBigEndian(in);
-					float helmetZ = NumberTools.readByteArrayBigEndian(in);
-					float helmetAngleX = NumberTools.readByteArrayBigEndian(in);
-					float helmetAngleY = NumberTools.readByteArrayBigEndian(in);
-					float helmetAngleZ = NumberTools.readByteArrayBigEndian(in);
-					float lhX = NumberTools.readByteArrayBigEndian(in);
-					float lhY = NumberTools.readByteArrayBigEndian(in);
-					float lhZ = NumberTools.readByteArrayBigEndian(in);
-					float lhrX = NumberTools.readByteArrayBigEndian(in);
-					float lhrY = NumberTools.readByteArrayBigEndian(in);
-					float lhrZ = NumberTools.readByteArrayBigEndian(in);
+					float helmetX = NumberTools.readByteArrayBigEndianFloat(in);
+					float helmetY = NumberTools.readByteArrayBigEndianFloat(in);
+					float helmetZ = NumberTools.readByteArrayBigEndianFloat(in);
+					float helmetAngleX = NumberTools.readByteArrayBigEndianFloat(in);
+					float helmetAngleY = NumberTools.readByteArrayBigEndianFloat(in);
+					float helmetAngleZ = NumberTools.readByteArrayBigEndianFloat(in);
+					float lhX = NumberTools.readByteArrayBigEndianFloat(in);
+					float lhY = NumberTools.readByteArrayBigEndianFloat(in);
+					float lhZ = NumberTools.readByteArrayBigEndianFloat(in);
+					float lhrX = NumberTools.readByteArrayBigEndianFloat(in);
+					float lhrY = NumberTools.readByteArrayBigEndianFloat(in);
+					float lhrZ = NumberTools.readByteArrayBigEndianFloat(in);
 
-					float rhX = NumberTools.readByteArrayBigEndian(in);
-					float rhY = NumberTools.readByteArrayBigEndian(in);
-					float rhZ = NumberTools.readByteArrayBigEndian(in);
-					float rhrX = NumberTools.readByteArrayBigEndian(in);
-					float rhrY = NumberTools.readByteArrayBigEndian(in);
-					float rhrZ = NumberTools.readByteArrayBigEndian(in);
+					float rhX = NumberTools.readByteArrayBigEndianFloat(in);
+					float rhY = NumberTools.readByteArrayBigEndianFloat(in);
+					float rhZ = NumberTools.readByteArrayBigEndianFloat(in);
+					float rhrX = NumberTools.readByteArrayBigEndianFloat(in);
+					float rhrY = NumberTools.readByteArrayBigEndianFloat(in);
+					float rhrZ = NumberTools.readByteArrayBigEndianFloat(in);
 					int lcs = in.read();
 					int rcs = in.read();
-					float ltx = NumberTools.readByteArrayBigEndian(in);
-					float lty = NumberTools.readByteArrayBigEndian(in);
-					float rtx = NumberTools.readByteArrayBigEndian(in);
-					float rty = NumberTools.readByteArrayBigEndian(in);
+					float ltx = NumberTools.readByteArrayBigEndianFloat(in);
+					float lty = NumberTools.readByteArrayBigEndianFloat(in);
+					float rtx = NumberTools.readByteArrayBigEndianFloat(in);
+					float rty = NumberTools.readByteArrayBigEndianFloat(in);
 					HelmetAndControllerInfo haci = new HelmetAndControllerInfo(helmetX, helmetY, helmetZ, helmetAngleX,
 							helmetAngleY, helmetAngleZ, lhX, lhY, lhZ, lhrX, lhrY, lhrZ, rhX, rhY, rhZ, rhrX, rhrY,
 							rhrZ, (byte) lcs, (byte) rcs, ltx, lty, rtx, rty);
 
-					System.out.println(haci);
+					System.out.println(("left hand x:" + haci.getLeftHandX()+"").replace('.', ','));
 				}
 				case GET_INCOMING_MESH:
 					int count = Math.min(toSend.size(), 100);

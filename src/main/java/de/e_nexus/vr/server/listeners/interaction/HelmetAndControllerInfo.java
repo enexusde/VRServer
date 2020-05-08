@@ -19,6 +19,10 @@ import java.io.Serializable;
  * that representing physical action.
  * <p>
  * The bitmasks are per controller, usually there are two controllers.
+ * <p>
+ * All positions and rotations are relative to the playground center. This means
+ * the rotation and location of the helmet does not influence the position and
+ * rotation of the controllers.
  */
 public final class HelmetAndControllerInfo implements Serializable {
 
@@ -128,15 +132,6 @@ public final class HelmetAndControllerInfo implements Serializable {
 
 	}
 
-	@Override
-	public String toString() {
-		return "HMD[pos=" + helmetX + "x" + helmetY + "x" + helmetZ + ",rot=" + helmetAngleX + "x" + helmetAngleY + "x"
-				+ helmetAngleZ + " \tleft=" + leftHandX + "x" + leftHandY + "x" + leftHandZ + ",rot=" + leftHandRotX
-				+ "x" + leftHandRotY + "x" + leftHandRotZ + " \tright=" + rightHandX + "x" + rightHandY + "x"
-				+ rightHandZ + ",rot=" + rightHandRotX + "x" + rightHandRotY + "x" + rightHandRotZ + ", \tbtnLeft="
-				+ leftControllerStateOrd + "]";
-	}
-
 	public float getHelmetX() {
 		return helmetX;
 	}
@@ -161,6 +156,28 @@ public final class HelmetAndControllerInfo implements Serializable {
 		return helmetAngleZ;
 	}
 
+	/**
+	 * The x-position of the left hand, increasing values means the controller is
+	 * moving to the right (if the user looks straight forward). If the controller
+	 * is not active the value <code>0.0f</code> is returned.
+	 * <table>
+	 * <caption>Interpretation of values</caption> 
+	 * <tr>
+	 * <th>Value</th>
+	 * <th>Interpretation</th>
+	 * </tr>
+	 * <tr>
+	 * <td>-1.00</td>
+	 * <td>Left Controller is sprawled to left side</td>
+	 * </tr>
+	 * <tr>
+	 * <td>1.00</td>
+	 * <td>Left Controller is sprawled to right side</td>
+	 * </tr>
+	 * </table>
+	 * 
+	 * @return Value from -1.0 to 1.0. 
+	 */
 	public float getLeftHandX() {
 		return leftHandX;
 	}
@@ -276,4 +293,50 @@ public final class HelmetAndControllerInfo implements Serializable {
 	public float getRightTouchY() {
 		return rightTouchY;
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.append("HMD[pos=");
+		stringBuilder.append((helmetX));
+		stringBuilder.append("x");
+		stringBuilder.append((helmetY));
+		stringBuilder.append("x");
+		stringBuilder.append((helmetZ));
+		stringBuilder.append(",rot=");
+		stringBuilder.append((helmetAngleX));
+		stringBuilder.append("x");
+		stringBuilder.append((helmetAngleY));
+		stringBuilder.append("x");
+		stringBuilder.append((helmetAngleZ));
+		stringBuilder.append(" \tleft=");
+		stringBuilder.append((leftHandX));
+		stringBuilder.append("x");
+		stringBuilder.append((leftHandY));
+		stringBuilder.append("x");
+		stringBuilder.append((leftHandZ));
+		stringBuilder.append(",rot=");
+		stringBuilder.append((leftHandRotX));
+		stringBuilder.append("x");
+		stringBuilder.append((leftHandRotY));
+		stringBuilder.append("x");
+		stringBuilder.append((leftHandRotZ));
+		stringBuilder.append(" \tright=");
+		stringBuilder.append((rightHandX));
+		stringBuilder.append("x");
+		stringBuilder.append((rightHandY));
+		stringBuilder.append("x");
+		stringBuilder.append((rightHandZ));
+		stringBuilder.append(",rot=");
+		stringBuilder.append((rightHandRotX));
+		stringBuilder.append("x");
+		stringBuilder.append((rightHandRotY));
+		stringBuilder.append("x");
+		stringBuilder.append((rightHandRotZ));
+		stringBuilder.append(", \tbtnLeft=");
+		stringBuilder.append(leftControllerStateOrd);
+		stringBuilder.append("]");
+		return stringBuilder.toString();
+	}
+
 }
