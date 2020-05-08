@@ -26,7 +26,7 @@ public class VRTest {
 	public void no_testGrid() throws IOException, InterruptedException {
 		System.out.println("Test grid");
 		VRServer r = new VRServer();
-		r.addVRClientStatusListener(new VRClientStatusListener() {
+		r.getListeners().addVRClientStatusListener(new VRClientStatusListener() {
 			public void notifyStatus(boolean connected) {
 				if (connected)
 					System.out.println("Connected.");
@@ -34,7 +34,7 @@ public class VRTest {
 					System.out.println("Disconnected.");
 			}
 		});
-		r.addVRExceptionListener(new VRExceptionListener() {
+		r.getListeners().addVRExceptionListener(new VRExceptionListener() {
 			public void handle(Exception e) {
 				if (e instanceof SocketTimeoutException) {
 					// ignore this, if no client, no connection.
@@ -42,7 +42,7 @@ public class VRTest {
 					e.printStackTrace();
 			}
 		});
-		r.addInfoListener(new VRClientRequestAppInfo() {
+		r.getListeners().addInfoListener(new VRClientRequestAppInfo() {
 			public String getLatin1Title() {
 				return "Test App";
 			}
@@ -70,7 +70,7 @@ public class VRTest {
 	public void testBoxesNormalsAndTexture() throws IOException, InterruptedException {
 		System.out.println("Test Boxes");
 		VRServer r = new VRServer();
-		r.addVRClientStatusListener(new VRClientStatusListener() {
+		r.getListeners().addVRClientStatusListener(new VRClientStatusListener() {
 			public void notifyStatus(boolean connected) {
 				if (connected)
 					System.out.println("Connected.");
@@ -78,7 +78,7 @@ public class VRTest {
 					System.out.println("Disconnected.");
 			}
 		});
-		r.addVRExceptionListener(new VRExceptionListener() {
+		r.getListeners().addVRExceptionListener(new VRExceptionListener() {
 			public void handle(Exception e) {
 				if (e instanceof SocketTimeoutException) {
 					// ignore this, if no client, no connection.
@@ -86,7 +86,7 @@ public class VRTest {
 					e.printStackTrace();
 			}
 		});
-		r.addInfoListener(new VRClientRequestAppInfo() {
+		r.getListeners().addInfoListener(new VRClientRequestAppInfo() {
 			public String getLatin1Title() {
 				return "Test App";
 			}
@@ -95,20 +95,18 @@ public class VRTest {
 		int i = 0;
 		for (File file : new File(".").listFiles()) {
 			i++;
-			BufferedImageTexture texture = TextureTools.fromText(file.getAbsolutePath(), Color.black, Color.white,
-					null);
+			BufferedImageTexture texture = TextureTools.fromText(file.getAbsolutePath(), Color.black, Color.white, null);
 			if (texture != null) {
 				Mesh<UVVector> mesh = new Mesh<UVVector>();
 				mesh.setTexture(TextureStage.DIFFUSE, texture);
 
 				UVVector a = new UVVector(texture.getWidth() / hf, 0, -1, 0, 1, null, null, null);
-				UVVector b = new UVVector(texture.getWidth() / hf, texture.getHeight() / hf, -1, 0, 0, null, null,
-						null);
+				UVVector b = new UVVector(texture.getWidth() / hf, texture.getHeight() / hf, -1, 0, 0, null, null, null);
 				UVVector c = new UVVector(0, texture.getHeight() / hf, -1, 1, 0, null, null, null);
 				UVVector d = new UVVector(0, 0, -1, 1, 1, null, null, null);
-				int addVector = mesh.addVector(a.cloneMoved(i,i,i));
-				mesh.addSquareClockwise(addVector, mesh.addVector(b.cloneMoved(i,i,i)),
-						mesh.addVector(c.cloneMoved(i,i,i)), mesh.addVector(d.cloneMoved(i,i,i)));
+				int addVector = mesh.addVector(a.cloneMoved(i, i, i));
+				mesh.addSquareClockwise(addVector, mesh.addVector(b.cloneMoved(i, i, i)), mesh.addVector(c.cloneMoved(i, i, i)),
+						mesh.addVector(d.cloneMoved(i, i, i)));
 				r.addMesh(mesh);
 			}
 

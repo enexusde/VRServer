@@ -10,14 +10,22 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.net.SocketException;
 import java.nio.charset.Charset;
+import java.rmi.ConnectIOException;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.UUID;
 import java.util.logging.Logger;
+
+import javax.management.RuntimeErrorException;
+import javax.swing.text.html.InlineView;
 
 import de.e_nexus.vr.server.codes.Client2ServerCode;
 import de.e_nexus.vr.server.listeners.VRClientRequestAppInfo;
@@ -48,26 +56,18 @@ public class VRServer extends ServerSocket {
 	static {
 		LATIN1 = Charset.forName("latin1");
 	}
-
-	/**
-	 * The status change listeners.
-	 */
-	private final Set<VRClientStatusListener> statusListeners = new LinkedHashSet<VRClientStatusListener>();
-	/**
-	 * The exception listeners.
-	 */
-	private final Set<VRExceptionListener> exceptionListeners = new LinkedHashSet<VRExceptionListener>();
-
-	/**
-	 * The info handlers.
-	 */
-	private final Set<VRClientRequestAppInfo> infoListeners = new LinkedHashSet<VRClientRequestAppInfo>();
+	private VRServerListeners listeners = new VRServerListeners();
 
 	/**
 	 * The list of meshes that must be send to the VR client and does not yet exists
 	 * on the VR client yet.
 	 */
 	private final Set<Mesh> toSend = new LinkedHashSet<Mesh>();
+
+	/**
+	 * The list of session-storages.
+	 */
+	private final VRSessionStorage sessionStorage = new VRSessionStorage();
 
 	/**
 	 * The worker thread to accept requests.
@@ -98,27 +98,6 @@ public class VRServer extends ServerSocket {
 	 */
 	public VRServer() throws IOException {
 		super(8779);
-	}
-
-	/**
-	 * Adds an VR client status listener.
-	 * 
-	 * @param vrClientStatusListener The status listener.
-	 */
-	public void addVRClientStatusListener(VRClientStatusListener vrClientStatusListener) {
-		statusListeners.add(vrClientStatusListener);
-	}
-
-	/**
-	 * Adds a exception listener to the {@link VRServer}.
-	 * 
-	 * <p>
-	 * The same instance of a listener can not be registred twice.
-	 * 
-	 * @param listener The exception listener.
-	 */
-	public void addVRExceptionListener(VRExceptionListener listener) {
-		exceptionListeners.add(listener);
 	}
 
 	/**
@@ -174,12 +153,15 @@ public class VRServer extends ServerSocket {
 			} else {
 				Client2ServerCode code = Client2ServerCode.values()[read];
 				switch (code) {
-				case GET_APP_INFO:
+				case CREATE_SESSION:
 					StringBuilder sb = new StringBuilder();
-					for (VRClientRequestAppInfo vrClientRequestAppInfo : infoListeners) {
-						sb.append(vrClientRequestAppInfo.getLatin1Title());
-					}
+					listeners.getTitle(sb);
 					outLenString(out, sb.toString());
+
+					InetSocketAddress remoteSocketAddress = (InetSocketAddress) s.getRemoteSocketAddress();
+					VRSession session = VRSession.registerNewSession(remoteSocketAddress.getAddress(), getSessionStorage());
+					outLenString(out, session.getUuid().toString());
+					listeners.notifyConnected(true);
 					break;
 
 				case SEND_HELMET_AND_CONTROLLER_INFO: {
@@ -208,17 +190,32 @@ public class VRServer extends ServerSocket {
 					float lty = NumberTools.readByteArrayBigEndianFloat(in);
 					float rtx = NumberTools.readByteArrayBigEndianFloat(in);
 					float rty = NumberTools.readByteArrayBigEndianFloat(in);
-					HelmetAndControllerInfo haci = new HelmetAndControllerInfo(helmetX, helmetY, helmetZ, helmetAngleX,
-							helmetAngleY, helmetAngleZ, lhX, lhY, lhZ, lhrX, lhrY, lhrZ, rhX, rhY, rhZ, rhrX, rhrY,
-							rhrZ, (byte) lcs, (byte) rcs, ltx, lty, rtx, rty);
-
-					System.out.println(("left hand x:" + haci.getLeftHandX()+"").replace('.', ','));
+					HelmetAndControllerInfo haci = new HelmetAndControllerInfo(helmetX, helmetY, helmetZ, helmetAngleX, helmetAngleY, helmetAngleZ, lhX, lhY,
+							lhZ, lhrX, lhrY, lhrZ, rhX, rhY, rhZ, rhrX, rhrY, rhrZ, (byte) lcs, (byte) rcs, ltx, lty, rtx, rty);
+					listeners.notifyInteraction(haci);
+					break;
 				}
-				case GET_INCOMING_MESH:
+				case GET_INCOMING_MESH: {
+
+					int uuidsize = in.read();
+					String possibleSessionId = "";
+					for (int i = 0; i < uuidsize; i++) {
+						int c = in.read();
+						if (c == -1) {
+							throw new ConnectIOException("Stream closed while reading the length of uuid.");
+						}
+						char cr = (char) c;
+						possibleSessionId += cr;
+					}
+
+					UUID designatedUUID = UUID.fromString(possibleSessionId);
+					InetSocketAddress remoteSockAddr = (InetSocketAddress) s.getRemoteSocketAddress();
+					VRSession vrSession = sessionStorage.getByIpAndSession(designatedUUID, remoteSockAddr);
 					int count = Math.min(toSend.size(), 100);
 					out.write(count);
+					out.flush();
+					Iterator<Mesh> iterator = toSend.iterator();
 					for (int i = 0; i < count; i++) {
-						Iterator<Mesh> iterator = toSend.iterator();
 						Mesh mesh = iterator.next();
 						iterator.remove();
 						ByteArrayOutputStream buff = new ByteArrayOutputStream();
@@ -228,14 +225,16 @@ public class VRServer extends ServerSocket {
 						// dumpToConsole(buff);
 						outLenString(out, buff.size() + "");
 						out.write(buff.toByteArray());
+						out.flush();
 						MeshTexturesOutputStream tos = new MeshTexturesOutputStream(out);
 						tos.writeTextures(mesh);
 						tos.flush();
-						out.flush();
 						MeshTextureInfoInputStream mtis = new MeshTextureInfoInputStream(in);
-						mtis.readTextureIndexes(mesh);
+						mtis.readTextureIndexes(mesh, vrSession);
 					}
 					out.flush();
+					break;
+				}
 				}
 			}
 			s.close();
@@ -256,23 +255,17 @@ public class VRServer extends ServerSocket {
 	private void outLenString(OutputStream out, String string) throws IOException {
 		byte[] b = string.getBytes(LATIN1);
 		int length = b.length;
-		out.write(length);
+		try {
+			out.write(length);
+		} catch (SocketException e) {
+			throw new IOException("Failed to send the length of bytes required to store the string '" + string + "'!", e);
+		}
 		out.write(b);
 		out.flush();
 	}
 
 	private void notifyExceptionInCycle(Exception e) {
-		boolean handled = false;
-		for (VRExceptionListener vrExceptionListener : exceptionListeners) {
-			try {
-				vrExceptionListener.handle(e);
-				handled = true;
-			} catch (Exception ex) {
-				ex.addSuppressed(e);
-				ex.printStackTrace();
-			}
-		}
-
+		boolean handled = listeners.handle(e);
 		if (!handled) {
 			e.printStackTrace();
 		}
@@ -282,11 +275,23 @@ public class VRServer extends ServerSocket {
 		return T;
 	}
 
-	public void addInfoListener(VRClientRequestAppInfo l) {
-		infoListeners.add(l);
+	public VRServerListeners getListeners() {
+		return listeners;
 	}
 
 	public void addMesh(Mesh m) {
 		toSend.add(m);
+	}
+
+	/**
+	 * Returns the session-storages.
+	 * <p>
+	 * The session-storage stores VRSessions. A VRSession holds informations about
+	 * what VR-client knows what meshes and what textures.
+	 * 
+	 * @return The session-storage, never <code>null</code>.
+	 */
+	public VRSessionStorage getSessionStorage() {
+		return sessionStorage;
 	}
 }

@@ -7,5 +7,23 @@
 package de.e_nexus.vr.server.mesh.tex;
 
 public enum TextureStage {
-	DIFFUSE, NORMALS, LIGHT, SHADER_CUSTOM3, SHADER_CUSTOM4, SHADER_CUSTOM5, SHADER_CUSTOM6, SHADER_CUSTOM7
+	/**
+	 * The natural appearance. A red texture will make the object appear red.
+	 * <p>
+	 * I am not sure about the difference to normal.
+	 */
+	DIFFUSE,
+	/**
+	 * The normals apperance. A blue texture will make the object appear blue.
+	 * <p>
+	 * I am not sure about the difference to diffuse.
+	 */
+	NORMALS,
+	/**
+	 * The lightmap. Does not effect the color of a mesh. Not sure what for it is
+	 * used. I guess it is for raytraced calculations, what part of the mesh is in
+	 * shaddow and what part of the mesh is lighen-up because of light-sources like
+	 * lamps or the sun.
+	 */
+	LIGHT, SHADER_CUSTOM3, SHADER_CUSTOM4, SHADER_CUSTOM5, SHADER_CUSTOM6, SHADER_CUSTOM7
 }

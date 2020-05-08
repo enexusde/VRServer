@@ -63,10 +63,6 @@ public class NumberTools {
 		}
 	}
 
-	public static void main(String[] args) {
-		System.out.println("-----------sdf" + getByxteArrayBigEndianFloat(new byte[] { 84, 1, 4, 64 }));
-	}
-
 	public static String byteToString(byte b) {
 		byte[] masks = { -128, 64, 32, 16, 8, 4, 2, 1 };
 		StringBuilder builder = new StringBuilder();

@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Logger;
 
+import de.e_nexus.vr.server.VRSession;
 import de.e_nexus.vr.server.mesh.Mesh;
 import de.e_nexus.vr.server.util.NumberTools;
 
@@ -67,9 +68,9 @@ public class MeshTextureInfoInputStream extends InputStream {
 		return in.markSupported();
 	}
 
-	public void readTextureIndexes(Mesh<?> m) throws IOException {
-		int nativeOID = NumberTools.readByteArrayBigEndian(in);
-		m.setId(nativeOID);
+	public void readTextureIndexes(Mesh<?> m, VRSession session) throws IOException {
+		int nativeMeshOID = NumberTools.readByteArrayBigEndian(in);
+		session.registerMesh(nativeMeshOID, m);
 		LOG.fine("Read texture indexes from client.");
 		for (TextureStage s : TextureStage.values()) {
 			int triesLeft = 30;
@@ -92,7 +93,7 @@ public class MeshTextureInfoInputStream extends InputStream {
 			int imageId = NumberTools.readByteArrayBigEndian(in);
 			if (imageId != -1) {
 				LOG.fine("Level " + s + " returns a imageId of " + imageId);
-				m.textures.get(s).setId(imageId);
+				session.registerTexture(imageId, m.textures.get(s));
 			} else {
 				LOG.fine("Level " + s + " reported to have no image.");
 			}

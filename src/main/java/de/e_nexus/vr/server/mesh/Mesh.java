@@ -66,12 +66,6 @@ public class Mesh<T extends Vector> extends TexturesHolder {
 	protected final Set<Triangle> polygons = new LinkedHashSet<Triangle>();
 
 	/**
-	 * The id of the mesh. Used to be the object-id in the VR client.
-	 * <code>null</code> if the mesh is not available to the client.
-	 */
-	protected Integer nativeOID;
-
-	/**
 	 * Add an 3 dimensional point (aka vector or vertex) to the Mesh.
 	 * <p>
 	 * You need at least 3 points for an {@link Triangle triangle}. Notice that a
@@ -257,20 +251,6 @@ public class Mesh<T extends Vector> extends TexturesHolder {
 		addSquareClockwise(a, d, h, e);
 		addSquareClockwise(c, b, f, g);
 		addSquareCounterClockwise(a, b, f, e);
-	}
-
-	/**
-	 * Set the id of the mesh.
-	 * 
-	 * <p>
-	 * Internally it is used to be the object-id.
-	 * 
-	 * @param meshId The mesh's identifier in the VR client.
-	 * @deprecated Only the VR client is allowed to give authentic values.
-	 */
-	@Deprecated
-	public void setId(int meshId) {
-		this.nativeOID = meshId;
 	}
 
 	public Mesh<T> cloneRotateClockwise(Vector aroundPoint, double rotateHorizontalRadians) {
