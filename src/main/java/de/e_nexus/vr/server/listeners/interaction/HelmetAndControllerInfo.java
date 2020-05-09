@@ -75,21 +75,21 @@ public final class HelmetAndControllerInfo implements Serializable {
 	 */
 	public static final byte BTN_GRIP = 0b00001000;
 
-	private final float helmetX;
+	private final float helmetRight;
 	private final float helmetY;
-	private final float helmetZ;
+	private final float helmetForward;
 	private final float helmetAngleX;
 	private final float helmetAngleY;
 	private final float helmetAngleZ;
-	private final float leftHandX;
-	private final float leftHandY;
-	private final float leftHandZ;
+	private final float leftHandRight;
+	private final float leftHandUp;
+	private final float leftHandForward;
 	private final float leftHandRotX;
 	private final float leftHandRotY;
 	private final float leftHandRotZ;
-	private final float rightHandX;
-	private final float rightHandY;
-	private final float rightHandZ;
+	private final float rightHandRight;
+	private final float rightHandUp;
+	private final float rightHandForward;
 	private final float rightHandRotX;
 	private final float rightHandRotY;
 	private final float rightHandRotZ;
@@ -105,21 +105,21 @@ public final class HelmetAndControllerInfo implements Serializable {
 			float leftHandRotY, float leftHandRotZ, float rightHandX, float rightHandY, float rightHandZ,
 			float rightHandRotX, float rightHandRotY, float rightHandRotZ, byte leftControllerStateOrd,
 			byte rightControllerStateOrd, float leftTouchX, float leftTouchY, float rightTouchX, float rightTouchY) {
-		this.helmetX = helmetX;
+		this.helmetRight = helmetX;
 		this.helmetY = helmetY;
-		this.helmetZ = helmetZ;
+		this.helmetForward = helmetZ;
 		this.helmetAngleX = helmetAngleX;
 		this.helmetAngleY = helmetAngleY;
 		this.helmetAngleZ = helmetAngleZ;
-		this.leftHandX = leftHandX;
-		this.leftHandY = leftHandY;
-		this.leftHandZ = leftHandZ;
+		this.leftHandRight = leftHandX;
+		this.leftHandUp = leftHandY;
+		this.leftHandForward = leftHandZ;
 		this.leftHandRotX = leftHandRotX;
 		this.leftHandRotY = leftHandRotY;
 		this.leftHandRotZ = leftHandRotZ;
-		this.rightHandX = rightHandX;
-		this.rightHandY = rightHandY;
-		this.rightHandZ = rightHandZ;
+		this.rightHandRight = rightHandX;
+		this.rightHandUp = rightHandY;
+		this.rightHandForward = rightHandZ;
 		this.rightHandRotX = rightHandRotX;
 		this.rightHandRotY = rightHandRotY;
 		this.rightHandRotZ = rightHandRotZ;
@@ -132,16 +132,16 @@ public final class HelmetAndControllerInfo implements Serializable {
 
 	}
 
-	public float getHelmetX() {
-		return helmetX;
+	public float getHelmetRight() {
+		return helmetRight;
 	}
 
-	public float getHelmetY() {
+	public float getHelmetUp() {
 		return helmetY;
 	}
 
-	public float getHelmetZ() {
-		return helmetZ;
+	public float getHelmetForward() {
+		return helmetForward;
 	}
 
 	public float getHelmetAngleX() {
@@ -178,16 +178,16 @@ public final class HelmetAndControllerInfo implements Serializable {
 	 * 
 	 * @return Value from -1.0 to 1.0. 
 	 */
-	public float getLeftHandX() {
-		return leftHandX;
+	public float getLeftHandRight() {
+		return leftHandRight;
 	}
 
-	public float getLeftHandY() {
-		return leftHandY;
+	public float getLeftHandUp() {
+		return leftHandUp;
 	}
 
-	public float getLeftHandZ() {
-		return leftHandZ;
+	public float getLeftHandForward() {
+		return leftHandForward;
 	}
 
 	public float getLeftHandRotX() {
@@ -202,16 +202,16 @@ public final class HelmetAndControllerInfo implements Serializable {
 		return leftHandRotZ;
 	}
 
-	public float getRightHandX() {
-		return rightHandX;
+	public float getRightHandRight() {
+		return rightHandRight;
 	}
 
-	public float getRightHandY() {
-		return rightHandY;
+	public float getRightHandUp() {
+		return rightHandUp;
 	}
 
-	public float getRightHandZ() {
-		return rightHandZ;
+	public float getRightHandForward() {
+		return rightHandForward;
 	}
 
 	public float getRightHandRotX() {
@@ -298,11 +298,11 @@ public final class HelmetAndControllerInfo implements Serializable {
 	public String toString() {
 		StringBuilder stringBuilder = new StringBuilder();
 		stringBuilder.append("HMD[pos=");
-		stringBuilder.append((helmetX));
+		stringBuilder.append((helmetRight));
 		stringBuilder.append("x");
 		stringBuilder.append((helmetY));
 		stringBuilder.append("x");
-		stringBuilder.append((helmetZ));
+		stringBuilder.append((helmetForward));
 		stringBuilder.append(",rot=");
 		stringBuilder.append((helmetAngleX));
 		stringBuilder.append("x");
@@ -310,11 +310,11 @@ public final class HelmetAndControllerInfo implements Serializable {
 		stringBuilder.append("x");
 		stringBuilder.append((helmetAngleZ));
 		stringBuilder.append(" \tleft=");
-		stringBuilder.append((leftHandX));
+		stringBuilder.append((leftHandRight));
 		stringBuilder.append("x");
-		stringBuilder.append((leftHandY));
+		stringBuilder.append((leftHandUp));
 		stringBuilder.append("x");
-		stringBuilder.append((leftHandZ));
+		stringBuilder.append((leftHandForward));
 		stringBuilder.append(",rot=");
 		stringBuilder.append((leftHandRotX));
 		stringBuilder.append("x");
@@ -322,11 +322,11 @@ public final class HelmetAndControllerInfo implements Serializable {
 		stringBuilder.append("x");
 		stringBuilder.append((leftHandRotZ));
 		stringBuilder.append(" \tright=");
-		stringBuilder.append((rightHandX));
+		stringBuilder.append((rightHandRight));
 		stringBuilder.append("x");
-		stringBuilder.append((rightHandY));
+		stringBuilder.append((rightHandUp));
 		stringBuilder.append("x");
-		stringBuilder.append((rightHandZ));
+		stringBuilder.append((rightHandForward));
 		stringBuilder.append(",rot=");
 		stringBuilder.append((rightHandRotX));
 		stringBuilder.append("x");

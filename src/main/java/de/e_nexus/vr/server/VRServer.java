@@ -10,11 +10,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketAddress;
 import java.net.SocketException;
 import java.nio.charset.Charset;
 import java.rmi.ConnectIOException;
@@ -24,13 +22,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;
 
-import javax.management.RuntimeErrorException;
-import javax.swing.text.html.InlineView;
-
 import de.e_nexus.vr.server.codes.Client2ServerCode;
-import de.e_nexus.vr.server.listeners.VRClientRequestAppInfo;
-import de.e_nexus.vr.server.listeners.VRClientStatusListener;
-import de.e_nexus.vr.server.listeners.VRExceptionListener;
 import de.e_nexus.vr.server.listeners.interaction.HelmetAndControllerInfo;
 import de.e_nexus.vr.server.mesh.Mesh;
 import de.e_nexus.vr.server.mesh.MeshOutputStream;
@@ -196,7 +188,6 @@ public class VRServer extends ServerSocket {
 					break;
 				}
 				case GET_INCOMING_MESH: {
-
 					int uuidsize = in.read();
 					String possibleSessionId = "";
 					for (int i = 0; i < uuidsize; i++) {
