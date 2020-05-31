@@ -8,5 +8,17 @@
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
+		<Bundle-Activator>de.e_nexus.vr.server.osgi.VRServerActivator</Bundle-Activator>
 	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.felix</groupId>
+			<artifactId>org.apache.felix.main</artifactId>
+			<version>6.0.3</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+	<build>
+		<defaultGoal>clean install org.apache.felix:maven-bundle-plugin:bundle</defaultGoal>
+	</build>
 </project>

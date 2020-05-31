@@ -22,6 +22,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;
 
+import javax.management.RuntimeErrorException;
+
 import de.e_nexus.vr.server.codes.Client2ServerCode;
 import de.e_nexus.vr.server.listeners.interaction.HelmetAndControllerInfo;
 import de.e_nexus.vr.server.mesh.Mesh;
@@ -82,6 +84,11 @@ public class VRServer extends ServerSocket {
 			}
 			while (running) {
 				cycle();
+			}
+			try {
+				VRServer.super.close();
+			} catch (IOException e) {
+				throw new RuntimeException(e);
 			}
 			T = null;
 		};
