@@ -236,21 +236,80 @@ public class Mesh<T extends Vector> extends TexturesHolder {
 	public void addCube(float right, float up, float forward, float width, float height) {
 		width = width / 2;
 		height = height / 2;
-		int a = addVector((T) new UVVector(right - width, height + up, forward + width, 0f, 0f, -1f, 1f, 1f));
-		int b = addVector((T) new UVVector(right + width, height + up, forward + width, 1f, 0f, 1f, 1f, 1f));
-		int c = addVector((T) new UVVector(right + width, height + up, forward - width, 1f, 1f, 1f, 1f, -1f));
-		int d = addVector((T) new UVVector(right - width, height + up, forward - width, 0f, 1f, -1f, 1f, -1f));
 
-		int e = addVector((T) new UVVector(right - width, up - height, forward + width, 0f, 0f, -1f, -1f, 1f));
-		int f = addVector((T) new UVVector(right + width, up - height, forward + width, 1f, 0f, 1f, -1f, 1f));
-		int g = addVector((T) new UVVector(right + width, up - height, forward - width, 1f, 1f, 1f, -1f, -1f));
-		int h = addVector((T) new UVVector(right - width, up - height, forward - width, 0f, 1f, -1f, -1f, -1f));
-		addSquareClockwise(a, b, c, d);
-		addSquareCounterClockwise(e, f, g, h);
-		addSquareClockwise(d, c, g, h);
-		addSquareClockwise(a, d, h, e);
-		addSquareClockwise(c, b, f, g);
-		addSquareCounterClockwise(a, b, f, e);
+		float p8x = right - width;
+		float p8y = up - height;
+		float p8z = forward - width;
+
+		float p5x = p8x;
+		float p5y = p8y;
+		float p5z = forward + width;
+
+		float p7x = right + width;
+		float p7y = p5y;
+		float p7z = p5z;
+
+		float p6x = p7x;
+		float p6y = p8y;
+		float p6z = p8z;
+
+		float p1x = right - width;
+		float p1y = up + height;
+		float p1z = forward - width;
+
+		float p2x = p1x;
+		float p2y = p1y;
+		float p2z = forward + width;
+
+		float p3x = right + width;
+		float p3y = p2y;
+		float p3z = p2z;
+
+		float p4x = p3x;
+		float p4y = p1y;
+		float p4z = p1z;
+
+		Vector p1 = new Vector(p1x, p1y, p1z);
+		Vector p2 = new Vector(p2x, p2y, p2z);
+		Vector p3 = new Vector(p3x, p3y, p3z);
+		Vector p4 = new Vector(p4x, p4y, p4z);
+		Vector p5 = new Vector(p5x, p5y, p5z);
+		Vector p6 = new Vector(p6x, p6y, p6z);
+		Vector p7 = new Vector(p7x, p7y, p7z);
+		Vector p8 = new Vector(p8x, p8y, p8z);
+
+		// add A
+		addSquareClockwise(addVector((T) new UVVector(new NormalVector(p1, 0f, 0f, 0f), 0f, 1f)), //
+				addVector((T) new UVVector(new NormalVector(p2, 0f, 0f, 0f), 0f, 0f)), //
+				addVector((T) new UVVector(new NormalVector(p3, 0f, 0f, 0f), 1f, 0f)), //
+				addVector((T) new UVVector(new NormalVector(p4, 0f, 0f, 0f), 1f, 1f)));
+
+		// add F
+		addSquareClockwise(addVector((T) new UVVector(new NormalVector(p1, 0f, 0f, 0f), 0f, 0f)), //
+				addVector((T) new UVVector(new NormalVector(p4, 0f, 0f, 0f), 1f, 0f)), //
+				addVector((T) new UVVector(new NormalVector(p6, 0f, 0f, 0f), 1f, 1f)), //
+				addVector((T) new UVVector(new NormalVector(p8, 0f, 0f, 0f), 0f, 1f)));
+		// add B
+		addSquareClockwise(addVector((T) new UVVector(new NormalVector(p4, 0f, 0f, 0f), 0f, 0f)), //
+				addVector((T) new UVVector(new NormalVector(p3, 0f, 0f, 0f), 1f, 0f)), //
+				addVector((T) new UVVector(new NormalVector(p7, 0f, 0f, 0f), 1f, 1f)), //
+				addVector((T) new UVVector(new NormalVector(p6, 0f, 0f, 0f), 0f, 1f)));
+		// add D
+		addSquareClockwise(addVector((T) new UVVector(new NormalVector(p2, 0f, 0f, 0f), 0f, 0f)), //
+				addVector((T) new UVVector(new NormalVector(p1, 0f, 0f, 0f), 1f, 0f)), //
+				addVector((T) new UVVector(new NormalVector(p8, 0f, 0f, 0f), 1f, 1f)), //
+				addVector((T) new UVVector(new NormalVector(p5, 0f, 0f, 0f), 0f, 1f)));
+		// add E
+		addSquareClockwise(addVector((T) new UVVector(new NormalVector(p3, 0f, 0f, 0f), 0f, 0f)), //
+				addVector((T) new UVVector(new NormalVector(p2, 0f, 0f, 0f), 1f, 0f)), //
+				addVector((T) new UVVector(new NormalVector(p5, 0f, 0f, 0f), 1f, 1f)), //
+				addVector((T) new UVVector(new NormalVector(p7, 0f, 0f, 0f), 0f, 1f)));
+		// add C
+		addSquareClockwise(addVector((T) new UVVector(new NormalVector(p7, 0f, 0f, 0f), 0f, 0f)), //
+				addVector((T) new UVVector(new NormalVector(p5, 0f, 0f, 0f), 1f, 0f)), //
+				addVector((T) new UVVector(new NormalVector(p8, 0f, 0f, 0f), 1f, 1f)), //
+				addVector((T) new UVVector(new NormalVector(p6, 0f, 0f, 0f), 0f, 1f)));
+
 	}
 
 	public Mesh<T> cloneRotateClockwise(Vector aroundPoint, double rotateHorizontalRadians) {

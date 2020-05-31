@@ -28,7 +28,7 @@ public class MeshOutputStream<T extends Vector> extends LittleEndianOutputStream
 	protected static final byte UINT_SIZE = 4;
 
 	public void writeMesh(Mesh<T> m) throws IOException {
-		boolean isUv = m.vectors.iterator().next() instanceof UVVector;
+		boolean isUv = !m.vectors.isEmpty() && m.vectors.iterator().next() instanceof UVVector;
 		boolean allHaveNormals = true;
 		for (Object v : m.vectors) {
 			if (v instanceof NormalVector) {
@@ -70,8 +70,7 @@ public class MeshOutputStream<T extends Vector> extends LittleEndianOutputStream
 			if (isUv) {
 				UVVector e = (UVVector) t;
 				LOG.finest("Write a texture coordinte " + e.uvX + "x" + e.uvY
-						+ " (factor from left border of image 'x' factor from upper border of image) of mesh " + mesh
-						+ ".");
+						+ " (factor from left border of image 'x' factor from upper border of image) of mesh " + mesh + ".");
 				writeLittleEndian(e.uvX);
 				writeLittleEndian(e.uvY);
 			} else {
@@ -90,8 +89,7 @@ public class MeshOutputStream<T extends Vector> extends LittleEndianOutputStream
 
 	private void writeVertexAttributeData(Mesh m, boolean isUv, boolean allHaveNormals) throws IOException {
 
-		attr(TYPE_FLOAT, THREE_COMPONENTS, MUST_NORMALIZE_FLAG,
-				"posi" + "tion" + (char) 0 + (char) 0 + (char) 0 + (char) 0);
+		attr(TYPE_FLOAT, THREE_COMPONENTS, MUST_NORMALIZE_FLAG, "posi" + "tion" + (char) 0 + (char) 0 + (char) 0 + (char) 0);
 		if (allHaveNormals) {
 			attr(TYPE_FLOAT, THREE_COMPONENTS, MUST_NORMALIZE_FLAG, "norm" + "als" + (char) 0);
 		}
@@ -100,8 +98,7 @@ public class MeshOutputStream<T extends Vector> extends LittleEndianOutputStream
 		}
 	}
 
-	private void attr(byte oneByteDataType, byte oneByteComponentCount, byte oneByteNormalizeFlag, String txt)
-			throws IOException {
+	private void attr(byte oneByteDataType, byte oneByteComponentCount, byte oneByteNormalizeFlag, String txt) throws IOException {
 		write(oneByteDataType);
 		write(oneByteComponentCount);
 		write(oneByteNormalizeFlag);

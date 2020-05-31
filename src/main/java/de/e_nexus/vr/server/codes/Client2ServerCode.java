@@ -24,5 +24,18 @@ public enum Client2ServerCode {
 	 * The client send to the server the helmet and controller position info and
 	 * buttons.
 	 */
-	SEND_HELMET_AND_CONTROLLER_INFO
+	SEND_HELMET_AND_CONTROLLER_INFO,
+
+	/**
+	 * The client requests from the server if there are meshes on the client that
+	 * must be removed because they are removed on the server.
+	 */
+	GET_REMOVE_MESH,
+	/**
+	 * The client-pc recieved keyboard modifications. Either a release of a button
+	 * or a press of a button or both. Not recieving this signal does not mean that
+	 * no button is pressed but that the pressing or releasing has not changed
+	 * meanwhile.
+	 */
+	SEND_KEYBOARD_CHANGES
 }

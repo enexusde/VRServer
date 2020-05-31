@@ -20,10 +20,9 @@ public enum TextureStage {
 	 */
 	NORMALS,
 	/**
-	 * The lightmap. Does not effect the color of a mesh. Not sure what for it is
-	 * used. I guess it is for raytraced calculations, what part of the mesh is in
-	 * shaddow and what part of the mesh is lighen-up because of light-sources like
-	 * lamps or the sun.
+	 * The lightmap. Does not effect the color of a mesh. It is for raytraced
+	 * calculations, what part of the mesh is in shaddow and what part of the mesh
+	 * is lighen-up because of light-sources like lamps or the sun.
 	 */
 	LIGHT, SHADER_CUSTOM3, SHADER_CUSTOM4, SHADER_CUSTOM5, SHADER_CUSTOM6, SHADER_CUSTOM7
 }

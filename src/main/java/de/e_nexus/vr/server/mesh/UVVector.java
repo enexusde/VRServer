@@ -48,11 +48,15 @@ public class UVVector extends NormalVector {
 	 * @param normalHeight   Normal vector to relative up in Meter.
 	 * @param normalFront    Normal vector to relative front in Meter.
 	 */
-	public UVVector(float right, float height, float front, float uvFracFromLeft, float uvFracFromTop,
-			Float normalRight, Float normalHeight, Float normalFront) {
+	public UVVector(float right, float height, float front, float uvFracFromLeft, float uvFracFromTop, Float normalRight, Float normalHeight,
+			Float normalFront) {
 		super(right, height, front, normalRight, normalHeight, normalFront);
 		this.uvX = uvFracFromLeft;
 		this.uvY = uvFracFromTop;
+	}
+
+	public UVVector(NormalVector nv, float uvFracFromLeft, float uvFracFromTop) {
+		this(nv.x, nv.y, nv.z, uvFracFromLeft, uvFracFromTop, nv.normalX, nv.normalY, nv.normalZ);
 	}
 
 	@Override
@@ -75,10 +79,8 @@ public class UVVector extends NormalVector {
 
 	@Override
 	public UVVector cloneRotateHorizontal(Vector aroundVector, double rotateHorizontalRadians) {
-		float ny = (float) (Math.cos(rotateHorizontalRadians) * (aroundVector.y - y)
-				- Math.sin(rotateHorizontalRadians) * z);
-		float nz = (float) (Math.sin(rotateHorizontalRadians) * (aroundVector.y - y)
-				+ Math.cos(rotateHorizontalRadians) * z);
+		float ny = (float) (Math.cos(rotateHorizontalRadians) * (aroundVector.y - y) - Math.sin(rotateHorizontalRadians) * z);
+		float nz = (float) (Math.sin(rotateHorizontalRadians) * (aroundVector.y - y) + Math.cos(rotateHorizontalRadians) * z);
 		return new UVVector(x, ny, nz, normalX, normalY, normalZ, uvX, uvY);
 	}
 

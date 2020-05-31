@@ -18,6 +18,10 @@ public class VRServerListeners {
 	/**
 	 * The status change listeners.
 	 */
+	private final Set<VRClientKeyboardListener> keyboardListeners = new LinkedHashSet<VRClientKeyboardListener>();
+	/**
+	 * The status change listeners.
+	 */
 	private final Set<VRClientStatusListener> statusListeners = new LinkedHashSet<VRClientStatusListener>();
 	/**
 	 * The exception listeners.
@@ -79,6 +83,29 @@ public class VRServerListeners {
 		for (VRClientHelmetAndControllerListener il : interactionListeners) {
 			il.notify(haci);
 		}
+	}
+
+	public void addKeyboardListener(VRClientKeyboardListener listener) {
+		keyboardListeners.add(listener);
+	}
+
+	public void notifyKeyboardChange(byte[] down, byte[] up, long incommingTimeMilis) {
+		ClientKeyboardScancode[] downCodes = new ClientKeyboardScancode[down.length];
+		ClientKeyboardScancode[] upCodes = new ClientKeyboardScancode[up.length];
+		for (int i = 0; i < down.length; i++) {
+			downCodes[i] = ClientKeyboardScancode.values()[down[i]];
+		}
+		for (int i = 0; i < up.length; i++) {
+			upCodes[i] = ClientKeyboardScancode.values()[up[i]];
+		}
+
+		for (VRClientKeyboardListener keyboardListener : keyboardListeners) {
+			keyboardListener.notifyKeyboardEvent(downCodes, upCodes, incommingTimeMilis);
+		}
+	}
+
+	public Set<VRClientKeyboardListener> getKeyboardListeners() {
+		return keyboardListeners;
 	}
 
 	public boolean handle(Exception e) {

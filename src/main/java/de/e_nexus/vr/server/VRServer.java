@@ -26,6 +26,7 @@ import de.e_nexus.vr.server.codes.Client2ServerCode;
 import de.e_nexus.vr.server.listeners.interaction.HelmetAndControllerInfo;
 import de.e_nexus.vr.server.mesh.Mesh;
 import de.e_nexus.vr.server.mesh.MeshOutputStream;
+import de.e_nexus.vr.server.mesh.Vector;
 import de.e_nexus.vr.server.mesh.tex.MeshTextureInfoInputStream;
 import de.e_nexus.vr.server.mesh.tex.MeshTexturesOutputStream;
 import de.e_nexus.vr.server.util.NumberTools;
@@ -64,7 +65,13 @@ public class VRServer extends ServerSocket {
 	/**
 	 * The worker thread to accept requests.
 	 */
-	private class Worker extends Thread {
+	private class ConnectionWorker extends Thread {
+
+		public ConnectionWorker() {
+
+			super(group, "VR-Server connection worker");
+		}
+
 		private boolean running = true;
 
 		public void run() {
@@ -81,15 +88,40 @@ public class VRServer extends ServerSocket {
 
 	}
 
-	private Worker T;
+	private ConnectionWorker T;
 
 	/**
-	 * The default constructor.
+	 * The group to work in, <code>null</code> if no threadgroup should be used.
+	 */
+	private final ThreadGroup group;
+
+	/**
+	 * The default constructor. The sky is darkgray and the bottom is white. There
+	 * is no floor and no fog.
 	 * 
 	 * @throws IOException If and only if the port is already in use.
 	 */
 	public VRServer() throws IOException {
-		super(8779);
+		this(8779, "VRServer Threadgroup");
+	}
+
+	/**
+	 * * Constructs a vr-server having a specific threadgroup-name.
+	 * 
+	 * @param port            The port to listen to.
+	 * @param threadGroupName The threadgroupname, <code>null</code> if no
+	 *                        threadgroup should be used.
+	 * @see #VRServer;
+	 * @throws IOException If and only if the port is already in use.
+	 * 
+	 */
+	public VRServer(int port, String threadGroupName) throws IOException {
+		super(port);
+		if (threadGroupName != null) {
+			group = new ThreadGroup(threadGroupName);
+		} else {
+			group = null;
+		}
 	}
 
 	/**
@@ -98,7 +130,7 @@ public class VRServer extends ServerSocket {
 	 */
 	public void start() {
 		if (T == null) {
-			T = new Worker();
+			T = new ConnectionWorker();
 			T.start();
 		}
 	}
@@ -193,7 +225,7 @@ public class VRServer extends ServerSocket {
 					for (int i = 0; i < uuidsize; i++) {
 						int c = in.read();
 						if (c == -1) {
-							throw new ConnectIOException("Stream closed while reading the length of uuid.");
+							throw new ConnectIOException("Stream closed while reading the length of uuid in order to ask for incomming meshes.");
 						}
 						char cr = (char) c;
 						possibleSessionId += cr;
@@ -225,6 +257,96 @@ public class VRServer extends ServerSocket {
 					}
 					out.flush();
 					break;
+				}
+				case GET_REMOVE_MESH: {
+					int uuidsize = in.read();
+					String possibleSessionId = "";
+					for (int i = 0; i < uuidsize; i++) {
+						int c = in.read();
+						if (c == -1) {
+							throw new ConnectIOException("Stream closed while reading the length of uuid in order to ask for meshes to remove.");
+						}
+						char cr = (char) c;
+						possibleSessionId += cr;
+					}
+
+					UUID designatedUUID = UUID.fromString(possibleSessionId);
+					InetSocketAddress remoteSockAddr = (InetSocketAddress) s.getRemoteSocketAddress();
+					VRSession vrSession = sessionStorage.getByIpAndSession(designatedUUID, remoteSockAddr);
+					Set<Integer> toRemove = vrSession.removeMeshesMarkedForRemoval();
+					int count = Math.min(toRemove.size(), 100);
+					out.write(count);
+					out.flush();
+					Iterator<Integer> iterator = toRemove.iterator();
+					for (int i = 0; i < count; i++) {
+						Integer clientMeshIdToRemove = iterator.next();
+						byte[] byteArrayLittleEndian = NumberTools.toByteArrayLittleEndian(clientMeshIdToRemove);
+						out.write(byteArrayLittleEndian);
+						out.flush();
+					}
+					break;
+				}
+				case SEND_KEYBOARD_CHANGES: {
+					int uuidsize = in.read();
+					String possibleSessionId = "";
+					for (int i = 0; i < uuidsize; i++) {
+						int c = in.read();
+						if (c == -1) {
+							throw new ConnectIOException("Stream closed while reading the length of uuid in order to notify keyboard changes.");
+						}
+						char cr = (char) c;
+						possibleSessionId += cr;
+					}
+
+					UUID designatedUUID = UUID.fromString(possibleSessionId);
+					InetSocketAddress remoteSockAddr = (InetSocketAddress) s.getRemoteSocketAddress();
+					VRSession vrSession = sessionStorage.getByIpAndSession(designatedUUID, remoteSockAddr);
+					if (vrSession != null) {
+						// read count of new keys pressed down
+						int countNewPressed = in.read();
+						if (countNewPressed == -1) {
+							throw new ConnectIOException("Stream closed while reading how many keys are pressed down on the keyboard.");
+						}
+						// read all the 0-255 values
+						byte[] newDown = new byte[countNewPressed];
+						for (int i = 0; i < countNewPressed; i++) {
+							int keyDown = in.read();
+							if (keyDown == -1) {
+								throw new ConnectIOException("Stream closed while reading the " + i + "(out of " + countNewPressed
+										+ ") key that is newly pressed down on the keyboard.");
+							}
+							newDown[i] = (byte) (((byte) keyDown) & 0xFF);
+
+						}
+						// read count of new keys released
+						int countNewReleased = in.read();
+						if (countNewReleased == -1) {
+							throw new ConnectIOException("Stream closed while reading how many keys are released on the keyboard.");
+						}
+						// read all keys released
+						byte[] newReleased = new byte[countNewReleased];
+						for (int i = 0; i < countNewReleased; i++) {
+							int keyUp = in.read();
+							if (keyUp == -1) {
+								throw new ConnectIOException("Stream closed while reading the " + i + "(out of " + countNewPressed
+										+ ") key that is newly released on the keyboard.");
+							}
+							newReleased[i] = (byte) (((byte) keyUp) & 0xFF);
+						}
+						// remember the current timestamp for ordering the changes.
+						long incomming = System.currentTimeMillis();
+						Thread notifyKeys = new Thread(group, new Runnable() {
+							@Override
+							public void run() {
+								getListeners().notifyKeyboardChange(newDown, newReleased, incomming);
+							}
+						}, "Non-blocking Keyboard change handler");
+						notifyKeys.start();
+					}
+					break;
+				}
+				default: {
+					LOG.severe("Illegal code incomming: " + read + " maybe not yet implemented.");
 				}
 				}
 			}
@@ -284,5 +406,15 @@ public class VRServer extends ServerSocket {
 	 */
 	public VRSessionStorage getSessionStorage() {
 		return sessionStorage;
+	}
+
+	public void removeMesh(Mesh<Vector> meshToRemove) {
+		synchronized (sessionStorage) {
+			synchronized (toSend) {
+				for (VRSession vrSession : sessionStorage) {
+					vrSession.markRemoveMesh(meshToRemove);
+				}
+			}
+		}
 	}
 }
