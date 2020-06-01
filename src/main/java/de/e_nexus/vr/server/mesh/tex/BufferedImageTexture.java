@@ -7,14 +7,8 @@
 package de.e_nexus.vr.server.mesh.tex;
 
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.logging.Logger;
-
-import javax.imageio.ImageIO;
 
 /**
  * Creates an image-texture out of a {@link BufferedImage}.

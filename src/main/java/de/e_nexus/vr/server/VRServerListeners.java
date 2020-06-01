@@ -108,7 +108,7 @@ public class VRServerListeners {
 		return keyboardListeners;
 	}
 
-	public boolean handle(Exception e) {
+	public boolean handle(Throwable e) {
 		boolean handled = false;
 		for (VRExceptionListener vrExceptionListener : exceptionListeners) {
 			try {

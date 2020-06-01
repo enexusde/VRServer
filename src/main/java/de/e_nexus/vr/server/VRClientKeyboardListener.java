@@ -14,6 +14,8 @@ public interface VRClientKeyboardListener {
 	 * <p>
 	 * Be aware that no changes will not produce a change-event. This means you will
 	 * never have both arrays empty.
+	 * <p>
+	 * For a better performance all notifications are in one extra thread.
 	 * 
 	 * <p>
 	 * <b>You are not allowed to modify the array! It will lead to unexpected

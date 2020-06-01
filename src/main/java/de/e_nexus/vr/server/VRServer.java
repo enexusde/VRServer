@@ -22,8 +22,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;
 
-import javax.management.RuntimeErrorException;
-
 import de.e_nexus.vr.server.codes.Client2ServerCode;
 import de.e_nexus.vr.server.listeners.interaction.HelmetAndControllerInfo;
 import de.e_nexus.vr.server.mesh.Mesh;
@@ -190,7 +188,8 @@ public class VRServer extends ServerSocket {
 					outLenString(out, sb.toString());
 
 					InetSocketAddress remoteSocketAddress = (InetSocketAddress) s.getRemoteSocketAddress();
-					VRSession session = VRSession.registerNewSession(remoteSocketAddress.getAddress(), getSessionStorage());
+					VRSession session = VRSession.registerNewSession(remoteSocketAddress.getAddress(),
+							getSessionStorage());
 					outLenString(out, session.getUuid().toString());
 					listeners.notifyConnected(true);
 					break;
@@ -221,8 +220,9 @@ public class VRServer extends ServerSocket {
 					float lty = NumberTools.readByteArrayBigEndianFloat(in);
 					float rtx = NumberTools.readByteArrayBigEndianFloat(in);
 					float rty = NumberTools.readByteArrayBigEndianFloat(in);
-					HelmetAndControllerInfo haci = new HelmetAndControllerInfo(helmetX, helmetY, helmetZ, helmetAngleX, helmetAngleY, helmetAngleZ, lhX, lhY,
-							lhZ, lhrX, lhrY, lhrZ, rhX, rhY, rhZ, rhrX, rhrY, rhrZ, (byte) lcs, (byte) rcs, ltx, lty, rtx, rty);
+					HelmetAndControllerInfo haci = new HelmetAndControllerInfo(helmetX, helmetY, helmetZ, helmetAngleX,
+							helmetAngleY, helmetAngleZ, lhX, lhY, lhZ, lhrX, lhrY, lhrZ, rhX, rhY, rhZ, rhrX, rhrY,
+							rhrZ, (byte) lcs, (byte) rcs, ltx, lty, rtx, rty);
 					listeners.notifyInteraction(haci);
 					break;
 				}
@@ -232,7 +232,8 @@ public class VRServer extends ServerSocket {
 					for (int i = 0; i < uuidsize; i++) {
 						int c = in.read();
 						if (c == -1) {
-							throw new ConnectIOException("Stream closed while reading the length of uuid in order to ask for incomming meshes.");
+							throw new ConnectIOException(
+									"Stream closed while reading the length of uuid in order to ask for incomming meshes.");
 						}
 						char cr = (char) c;
 						possibleSessionId += cr;
@@ -271,7 +272,8 @@ public class VRServer extends ServerSocket {
 					for (int i = 0; i < uuidsize; i++) {
 						int c = in.read();
 						if (c == -1) {
-							throw new ConnectIOException("Stream closed while reading the length of uuid in order to ask for meshes to remove.");
+							throw new ConnectIOException(
+									"Stream closed while reading the length of uuid in order to ask for meshes to remove.");
 						}
 						char cr = (char) c;
 						possibleSessionId += cr;
@@ -299,7 +301,8 @@ public class VRServer extends ServerSocket {
 					for (int i = 0; i < uuidsize; i++) {
 						int c = in.read();
 						if (c == -1) {
-							throw new ConnectIOException("Stream closed while reading the length of uuid in order to notify keyboard changes.");
+							throw new ConnectIOException(
+									"Stream closed while reading the length of uuid in order to notify keyboard changes.");
 						}
 						char cr = (char) c;
 						possibleSessionId += cr;
@@ -312,15 +315,16 @@ public class VRServer extends ServerSocket {
 						// read count of new keys pressed down
 						int countNewPressed = in.read();
 						if (countNewPressed == -1) {
-							throw new ConnectIOException("Stream closed while reading how many keys are pressed down on the keyboard.");
+							throw new ConnectIOException(
+									"Stream closed while reading how many keys are pressed down on the keyboard.");
 						}
 						// read all the 0-255 values
 						byte[] newDown = new byte[countNewPressed];
 						for (int i = 0; i < countNewPressed; i++) {
 							int keyDown = in.read();
 							if (keyDown == -1) {
-								throw new ConnectIOException("Stream closed while reading the " + i + "(out of " + countNewPressed
-										+ ") key that is newly pressed down on the keyboard.");
+								throw new ConnectIOException("Stream closed while reading the " + i + "(out of "
+										+ countNewPressed + ") key that is newly pressed down on the keyboard.");
 							}
 							newDown[i] = (byte) (((byte) keyDown) & 0xFF);
 
@@ -328,15 +332,16 @@ public class VRServer extends ServerSocket {
 						// read count of new keys released
 						int countNewReleased = in.read();
 						if (countNewReleased == -1) {
-							throw new ConnectIOException("Stream closed while reading how many keys are released on the keyboard.");
+							throw new ConnectIOException(
+									"Stream closed while reading how many keys are released on the keyboard.");
 						}
 						// read all keys released
 						byte[] newReleased = new byte[countNewReleased];
 						for (int i = 0; i < countNewReleased; i++) {
 							int keyUp = in.read();
 							if (keyUp == -1) {
-								throw new ConnectIOException("Stream closed while reading the " + i + "(out of " + countNewPressed
-										+ ") key that is newly released on the keyboard.");
+								throw new ConnectIOException("Stream closed while reading the " + i + "(out of "
+										+ countNewPressed + ") key that is newly released on the keyboard.");
 							}
 							newReleased[i] = (byte) (((byte) keyUp) & 0xFF);
 						}
@@ -378,13 +383,14 @@ public class VRServer extends ServerSocket {
 		try {
 			out.write(length);
 		} catch (SocketException e) {
-			throw new IOException("Failed to send the length of bytes required to store the string '" + string + "'!", e);
+			throw new IOException("Failed to send the length of bytes required to store the string '" + string + "'!",
+					e);
 		}
 		out.write(b);
 		out.flush();
 	}
 
-	private void notifyExceptionInCycle(Exception e) {
+	private void notifyExceptionInCycle(Throwable e) {
 		boolean handled = listeners.handle(e);
 		if (!handled) {
 			e.printStackTrace();
@@ -415,7 +421,7 @@ public class VRServer extends ServerSocket {
 		return sessionStorage;
 	}
 
-	public void removeMesh(Mesh<Vector> meshToRemove) {
+	public void removeMesh(Mesh<? extends Vector> meshToRemove) {
 		synchronized (sessionStorage) {
 			synchronized (toSend) {
 				for (VRSession vrSession : sessionStorage) {
@@ -423,5 +429,9 @@ public class VRServer extends ServerSocket {
 				}
 			}
 		}
+	}
+
+	public void handle(Throwable e) {
+		notifyExceptionInCycle(e);
 	}
 }

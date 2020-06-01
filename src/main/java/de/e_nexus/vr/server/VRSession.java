@@ -104,7 +104,7 @@ public final class VRSession implements Serializable {
 		}
 	}
 
-	public void markRemoveMesh(Mesh<Vector> meshToRemoveFromClient) {
+	public void markRemoveMesh(Mesh<? extends Vector> meshToRemoveFromClient) {
 		synchronized (clientMeshIdsToRemove) {
 			for (Integer clientMeshId : clientMeshIds.keySet()) {
 				if (clientMeshIds.get(clientMeshId) == meshToRemoveFromClient) {

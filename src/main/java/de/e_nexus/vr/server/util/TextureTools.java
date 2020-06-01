@@ -42,6 +42,21 @@ public class TextureTools {
 		g.setColor(color);
 		FontMetrics fm = g.getFontMetrics();
 		g.drawString(text, 0, fm.getAscent());
+
+		return new BufferedImageTexture(bi);
+	}
+
+	/**
+	 * Constructs a texture from a single color.
+	 * 
+	 * @param color The color, never <code>null</code>.
+	 * @return The texture for this color.
+	 */
+	public static BufferedImageTexture fromColor(Color color) {
+		BufferedImage bi = new BufferedImage(16, 16, DEFAULT_TEXTURE_TYPE);
+		Graphics g = bi.getGraphics();
+		g.setColor(color);
+		g.fillRect(0, 0, 16, 16);
 		return new BufferedImageTexture(bi);
 	}
 }

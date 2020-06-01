@@ -35,7 +35,7 @@ public class VRTest {
 			}
 		});
 		r.getListeners().addVRExceptionListener(new VRExceptionListener() {
-			public void handle(Exception e) {
+			public void handle(Throwable e) {
 				if (e instanceof SocketTimeoutException) {
 					// ignore this, if no client, no connection.
 				} else
@@ -79,7 +79,7 @@ public class VRTest {
 			}
 		});
 		r.getListeners().addVRExceptionListener(new VRExceptionListener() {
-			public void handle(Exception e) {
+			public void handle(Throwable e) {
 				if (e instanceof SocketTimeoutException) {
 					// ignore this, if no client, no connection.
 				} else
