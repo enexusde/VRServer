@@ -38,7 +38,7 @@ public class VRServerActivator implements BundleActivator, VRServerService {
 			}
 		});
 		server.start();
-		LOG.info("Start Osgi spiced VR Server.");
+		LOG.info("Start Osgi spiced VR Server.\nYou might get asked by the firewall if you like to allow java to communicate to other systems. In order to connect the local VR-Client you are requested to grant the communication.");
 		vrServerReplimentor = ctx.registerService(VRServerService.class, this, new Hashtable<String, String>());
 		vrServerReference = vrServerReplimentor.getReference();
 	}
@@ -63,5 +63,4 @@ public class VRServerActivator implements BundleActivator, VRServerService {
 	public VRServer getVRServer() {
 		return server;
 	}
-
 }
