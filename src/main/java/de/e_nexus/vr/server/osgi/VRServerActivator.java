@@ -26,6 +26,7 @@ public class VRServerActivator implements BundleActivator, VRServerService {
 
 	@Override
 	public void start(BundleContext ctx) throws Exception {
+		System.out.print("Start Osgi spiced VR Server ...");
 		if (server != null) {
 			throw new Exception("Server already bound. Last shutdown was not clean. This is a bug, please report it.");
 		}
@@ -38,25 +39,27 @@ public class VRServerActivator implements BundleActivator, VRServerService {
 			}
 		});
 		server.start();
-		LOG.info("Start Osgi spiced VR Server.\nYou might get asked by the firewall if you like to allow java to communicate to other systems. In order to connect the local VR-Client you are requested to grant the communication.");
+		
 		vrServerReplimentor = ctx.registerService(VRServerService.class, this, new Hashtable<String, String>());
 		vrServerReference = vrServerReplimentor.getReference();
+		System.out.println(" [OK] (You might get asked by the firewall if you like to allow java to communicate to other systems. In order to connect the local VR-Client you are requested to grant the communication.)");
 	}
 
 	@Override
 	public void stop(BundleContext arg0) throws Exception {
+		System.out.print("Stop VR Server ...");
 		if (server == null) {
 			throw new Exception("Could not stop VR Server. Stop not possible.");
 		}
 		if (server.isStopping()) {
 			throw new Exception("Could not stop VR Server, shutdown already in progress.");
 		}
-		LOG.info("Unregister service and stop VR Server.");
 		vrServerReplimentor.unregister();
 		vrServerReplimentor = null;
 		server.stop();
 		vrServerReference = null;
 		server = null;
+		System.out.println(" [OK]");
 	}
 
 	@Override

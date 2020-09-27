@@ -10,16 +10,17 @@
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<Bundle-Activator>de.e_nexus.vr.server.osgi.VRServerActivator</Bundle-Activator>
 		<Bundle-SymbolicName>VR-Server</Bundle-SymbolicName>
-		<!-- <Export-Package>de.e_nexus.vr.server.osgi.inter</Export-Package>  -->
 	</properties>
+
 	<dependencies>
 		<dependency>
-			<groupId>org.apache.felix</groupId>
-			<artifactId>org.apache.felix.main</artifactId>
-			<version>6.0.3</version>
+			<groupId>org.osgi</groupId>
+			<artifactId>osgi.core</artifactId>
+			<version>6.0.0</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
+
 	<build>
 		<defaultGoal>clean install org.apache.felix:maven-bundle-plugin:bundle</defaultGoal>
 	</build>
