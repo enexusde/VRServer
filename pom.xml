@@ -10,8 +10,8 @@
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<Bundle-Activator>de.e_nexus.vr.server.osgi.VRServerActivator</Bundle-Activator>
 		<Bundle-SymbolicName>VR-Server</Bundle-SymbolicName>
+		<exec.mainClass>de.e_nexus.vr.server.osgi.VRServerActivator</exec.mainClass>
 	</properties>
-
 	<dependencies>
 		<dependency>
 			<groupId>org.osgi</groupId>
@@ -20,7 +20,6 @@
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
-
 	<build>
 		<defaultGoal>clean install org.apache.felix:maven-bundle-plugin:bundle</defaultGoal>
 	</build>
