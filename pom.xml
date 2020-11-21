@@ -9,18 +9,40 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<Bundle-Activator>de.e_nexus.vr.server.osgi.VRServerActivator</Bundle-Activator>
+		<Bundle-Name>VR-Server</Bundle-Name>
 		<Bundle-SymbolicName>VR-Server</Bundle-SymbolicName>
+		<Bundle-Import-Package>org.osgi.service.cdi.annotations</Bundle-Import-Package>
 		<exec.mainClass>de.e_nexus.vr.server.osgi.VRServerActivator</exec.mainClass>
+		<release>false</release>
 	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.osgi</groupId>
 			<artifactId>osgi.core</artifactId>
-			<version>6.0.0</version>
+			<version>7.0.0</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 	<build>
-		<defaultGoal>clean install org.apache.felix:maven-bundle-plugin:bundle</defaultGoal>
+		<defaultGoal>clean install org.apache.felix:maven-bundle-plugin:bundle resources:copy-resources</defaultGoal>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.1.0</version>
+				<configuration>
+					<outputDirectory>C:/Program Files/apache-karaf-4.3.0/deploy</outputDirectory>
+					<skip>${release}</skip>
+					<resources>
+						<resource>
+							<directory>target</directory>
+							<includes>
+								<include>*.jar</include>
+							</includes>
+						</resource>
+					</resources>
+				</configuration>
+			</plugin>
+		</plugins>
 	</build>
 </project>
