@@ -12,6 +12,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.Vector;
 
+import de.e_nexus.vr.server.mesh.Mesh;
+
 public class VRSessionStorage extends Vector<VRSession> {
 
 	/**
@@ -34,6 +36,14 @@ public class VRSessionStorage extends Vector<VRSession> {
 		}
 	}
 
+	@Override
+	public boolean add(VRSession newSession) {
+		for (Mesh mesh : meshesAllExistingMeshesKnow) {
+			newSession.markAddMesh(mesh);
+		}
+		return super.add(newSession);
+	}
+
 	public VRSession getByIpAndSession(UUID uid, InetSocketAddress ip) {
 		for (VRSession s : this) {
 			if (s.isThisSession(ip.getAddress(), uid)) {
@@ -41,5 +51,11 @@ public class VRSessionStorage extends Vector<VRSession> {
 			}
 		}
 		return null;
+	}
+
+	private final Set<Mesh> meshesAllExistingMeshesKnow = new LinkedHashSet<Mesh>(0);
+
+	public void addPublishMeshToNewSessions(Mesh meshToAdd) {
+		meshesAllExistingMeshesKnow.add(meshToAdd);
 	}
 }

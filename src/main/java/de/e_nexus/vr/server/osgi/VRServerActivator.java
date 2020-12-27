@@ -1,6 +1,10 @@
 package de.e_nexus.vr.server.osgi;
 
+import java.net.BindException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Hashtable;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.osgi.framework.BundleActivator;
@@ -22,27 +26,30 @@ public class VRServerActivator implements BundleActivator, VRServerService {
 
 	private ServiceRegistration<VRServerService> vrServerReplimentor;
 
-	private ServiceReference<VRServerService> vrServerReference;
-
 	@Override
 	public void start(BundleContext ctx) throws Exception {
 		System.out.print("Start Osgi spiced VR Server ...");
 		if (server != null) {
 			throw new Exception("Server already bound. Last shutdown was not clean. This is a bug, please report it.");
 		}
-		server = new VRServer(8779, "Osgi VR-Server (Bundle " + ctx.getBundle().getBundleId() + ")");
-		server.getListeners().addVRExceptionListener(new VRExceptionListener() {
+		try {
+			server = new VRServer(8779, "Osgi VR-Server (Bundle " + ctx.getBundle().getBundleId() + ")");
 
-			@Override
-			public void handle(Throwable e) {
+			server.getListeners().addVRExceptionListener(new VRExceptionListener() {
 
-			}
-		});
-		server.start();
-		
-		vrServerReplimentor = ctx.registerService(VRServerService.class, this, new Hashtable<String, String>());
-		vrServerReference = vrServerReplimentor.getReference();
-		System.out.println(" [OK] (You might get asked by the firewall if you like to allow java to communicate to other systems. In order to connect the local VR-Client you are requested to grant the communication.)");
+				@Override
+				public void handle(Throwable e) {
+					LOG.log(Level.FINE, e.getMessage(), e);
+				}
+			});
+			server.start();
+
+			vrServerReplimentor = ctx.registerService(VRServerService.class, this, new Hashtable<String, String>());
+			System.out.println(" [OK]  @" + new SimpleDateFormat("HH:mm").format(new Date())
+					+ " (You might get asked by the firewall if you like to allow java to communicate to other systems. In order to connect the local VR-Client you are requested to grant the communication.)");
+		} catch (BindException e) {
+			System.out.println(" [FAILED]: " + e.getMessage());
+		}
 	}
 
 	@Override
@@ -57,9 +64,8 @@ public class VRServerActivator implements BundleActivator, VRServerService {
 		vrServerReplimentor.unregister();
 		vrServerReplimentor = null;
 		server.stop();
-		vrServerReference = null;
 		server = null;
-		System.out.println(" [OK]");
+		System.out.println(" [OK] @" + new SimpleDateFormat("HH:mm").format(new Date()));
 	}
 
 	@Override

@@ -6,8 +6,10 @@
  */
 package de.e_nexus.vr.server;
 
+import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
 import java.net.InetAddress;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -33,6 +35,7 @@ public final class VRSession implements Serializable {
 	private final InetAddress remoteAddr;
 	private final Map<Integer, Mesh> clientMeshIds = new LinkedHashMap<>(0);
 	private final Set<Integer> clientMeshIdsToRemove = new LinkedHashSet<>(clientMeshIds.size());
+	private final Set<Mesh> clientMeshsToAdd = new LinkedHashSet<>(0);
 	private final Map<Integer, Texture> clientTextureIds = new LinkedHashMap<>(0);
 	private UUID uuid;
 
@@ -77,7 +80,9 @@ public final class VRSession implements Serializable {
 
 	public static VRSession registerNewSession(InetAddress remoteAddr, VRSessionStorage storage) {
 		VRSession newSession = new VRSession(remoteAddr, storage.newUUID());
-		storage.add(newSession);
+		synchronized (storage) {
+			storage.add(newSession);
+		}
 		return newSession;
 	}
 
@@ -112,5 +117,15 @@ public final class VRSession implements Serializable {
 				}
 			}
 		}
+	}
+
+	public void markAddMesh(Mesh meshToAdd) {
+		synchronized (clientMeshsToAdd) {
+			clientMeshsToAdd.add(meshToAdd);
+		}
+	}
+
+	public Set<Mesh> getMeshesToSend() {
+		return clientMeshsToAdd;
 	}
 }
