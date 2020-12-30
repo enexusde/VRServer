@@ -140,6 +140,9 @@ public class Mesh<T extends Vector> extends TexturesHolder {
 		return this;
 	}
 
+	/**
+	 * @see #addSquareClockwise(int, int, int, int)
+	 */
 	public Mesh<T> addSquareClockwiseDoublesided(int a, int d, int c, int b) {
 		addTriangleCounterClockwise(a, c, d);
 		addTriangleCounterClockwise(a, b, c);
@@ -185,15 +188,18 @@ public class Mesh<T extends Vector> extends TexturesHolder {
 	 * Clone and moves the mesh to a new mesh. The texture is not cloned but
 	 * referenced in the cloned mesh.
 	 * 
-	 * @param x The relative move to the right in meter.
-	 * @param y The relative move upwards in meter.
-	 * @param z The relative move forward in meter.
+	 * @param rightMoveM   The relative move to the right in meter, may be negative
+	 *                     in order to move left.
+	 * @param upwardMoveM  The relative move upwards in meter, may be negative in
+	 *                     order to move downwards.
+	 * @param forwardMoveM The relative move forward in meter, may be negative in
+	 *                     order to move backwards.
 	 * @return The cloned and moved mesh.
 	 */
-	public Mesh<T> cloneMoved(float x, float y, float z) {
+	public Mesh<T> cloneMoved(float rightMoveM, float upwardMoveM, float forwardMoveM) {
 		Mesh<T> m = new Mesh<T>();
 		for (T t : vectors) {
-			m.addVector((T) t.cloneMoved(x, y, z));
+			m.addVector((T) t.cloneMoved(rightMoveM, upwardMoveM, forwardMoveM));
 		}
 		for (Triangle triangle : polygons) {
 			m.addTriangle(triangle);
@@ -203,6 +209,15 @@ public class Mesh<T extends Vector> extends TexturesHolder {
 		}
 		return m;
 	}
+
+	/**
+	 * Clone and rotate the mesh around a specific point.
+	 * 
+	 * @param aroundPoint             Point to rotate around, never
+	 *                                <code>null</code>.
+	 * @param rotateHorizontalRadians Radians to rotate.
+	 * @return
+	 */
 
 	public Mesh<T> cloneRotateHorizontal(Vector aroundPoint, double rotateHorizontalRadians) {
 		Mesh<T> m = new Mesh<T>();
