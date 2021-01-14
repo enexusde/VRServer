@@ -7,9 +7,15 @@
 package de.e_nexus.vr.server.mesh;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeSet;
 
 import de.e_nexus.vr.server.mesh.tex.TextureStage;
 import de.e_nexus.vr.server.mesh.tex.TexturesHolder;
@@ -19,7 +25,7 @@ import de.e_nexus.vr.server.mesh.tex.TexturesHolder;
  * points. A edge is a strong relation between exactly two points (also known as
  * line in a wireframe model). A triangle (a polygon of 3 points) is a strong
  * relation between three points and this is the first representation that is
- * visible in 3d (usually a white-filled triangle)
+ * visible in 3d (usually a <b>white</b>-filled triangle)
  * 
  * <p>
  * The word polygon or polygons is used and constantly suggest forms having more
@@ -64,6 +70,10 @@ public class Mesh<T extends Vector> extends TexturesHolder {
 	 * The polygons in the mesh.
 	 */
 	protected final Set<Triangle> polygons = new LinkedHashSet<Triangle>();
+
+	private static boolean STORE_CREATE_TRACE = System.getenv("storetrace") != null;
+
+	private StackTraceElement[] trace = STORE_CREATE_TRACE ? Thread.currentThread().getStackTrace() : null;
 
 	/**
 	 * Add an 3 dimensional point (aka vector or vertex) to the Mesh.
@@ -112,7 +122,7 @@ public class Mesh<T extends Vector> extends TexturesHolder {
 	 * <table>
 	 * <caption>Model:</caption>
 	 * <tr>
-	 * <td>c</td>
+	 * <td>a</td>
 	 * <td>-</td>
 	 * <td>b</td>
 	 * </tr>
@@ -124,28 +134,28 @@ public class Mesh<T extends Vector> extends TexturesHolder {
 	 * <tr>
 	 * <td>d</td>
 	 * <td>-</td>
-	 * <td>a</td>
+	 * <td>c</td>
 	 * </tr>
 	 * </table>
 	 * 
 	 * @param a The first point, never negative.
-	 * @param d The second point, never negative.
+	 * @param b The second point, never negative.
 	 * @param c The third point, never negative.
-	 * @param b The fourth point, never negative.
+	 * @param d The fourth point, never negative.
 	 * @return The mesh itself, not a copy.
 	 */
-	public Mesh<T> addSquareClockwise(int a, int d, int c, int b) {
-		addTriangleCounterClockwise(a, c, d);
+	public Mesh<T> addSquareClockwise(int a, int b, int c, int d) {
 		addTriangleCounterClockwise(a, b, c);
+		addTriangleCounterClockwise(a, c, d);
 		return this;
 	}
 
 	/**
 	 * @see #addSquareClockwise(int, int, int, int)
 	 */
-	public Mesh<T> addSquareClockwiseDoublesided(int a, int d, int c, int b) {
-		addTriangleCounterClockwise(a, c, d);
-		addTriangleCounterClockwise(a, b, c);
+	public Mesh<T> addSquareClockwiseDoublesided(int a, int b, int c, int d) {
+		addSquareClockwise(a, b, c, d);
+		addSquareCounterClockwise(a, b, c, d);
 		return this;
 	}
 
@@ -249,16 +259,50 @@ public class Mesh<T extends Vector> extends TexturesHolder {
 	 * @param height  The height of the cube in meter.
 	 */
 	public void addCube(float right, float up, float forward, float width, float height) {
+		addCube(right, up, forward, width, height, width);
+	}
+
+	public Mesh<T> cloneRotateClockwise(Vector aroundPoint, double rotateHorizontalRadians) {
+		Mesh<T> m = new Mesh<T>();
+		for (T t : vectors) {
+			m.addVector((T) t.cloneRotateClockwise(aroundPoint, rotateHorizontalRadians));
+		}
+		for (Triangle triangle : polygons) {
+			m.addTriangle(triangle);
+		}
+		for (TextureStage stage : textures.keySet()) {
+			m.setTexture(stage, textures.get(stage));
+		}
+		return m;
+
+	}
+
+	/**
+	 * Adds an cube using conclusive normal mappings over the complete size of the
+	 * texture.
+	 * <p>
+	 * Using negative values for width and/or height may cause display problems.
+	 * 
+	 * @param right   The distance to the right in meter.
+	 * @param up      The distance upwards in meter.
+	 * @param forward The distance forward in meter.
+	 * @param width   The width of the cube in meter, the distance from the
+	 *                most-left side of the block to the most-right side of the
+	 *                block.
+	 * @param deep    The deepness of the cube in meter.
+	 * @param height  The height of the cube in meter.
+	 */
+	public void addCube(float right, float up, float forward, float width, float height, float deep) {
 		width = width / 2;
 		height = height / 2;
 
 		float p8x = right - width;
 		float p8y = up - height;
-		float p8z = forward - width;
+		float p8z = forward - deep;
 
 		float p5x = p8x;
 		float p5y = p8y;
-		float p5z = forward + width;
+		float p5z = forward + deep;
 
 		float p7x = right + width;
 		float p7y = p5y;
@@ -270,11 +314,11 @@ public class Mesh<T extends Vector> extends TexturesHolder {
 
 		float p1x = right - width;
 		float p1y = up + height;
-		float p1z = forward - width;
+		float p1z = forward - deep;
 
 		float p2x = p1x;
 		float p2y = p1y;
-		float p2z = forward + width;
+		float p2z = forward + deep;
 
 		float p3x = right + width;
 		float p3y = p2y;
@@ -301,7 +345,7 @@ public class Mesh<T extends Vector> extends TexturesHolder {
 
 		// add F
 		addSquareClockwise(addVector((T) new UVVector(new NormalVector(p1, 0f, 0f, 0f), 0f, 0f)), //
-				addVector((T) new UVVector(new NormalVector(p4, 0f, 0f, 0f), 1f, 0f)), //
+				addVector((T) new UVVector(new NormalVector(p4, 0f, 0f, 1f), 1f, 0f)), //
 				addVector((T) new UVVector(new NormalVector(p6, 0f, 0f, 0f), 1f, 1f)), //
 				addVector((T) new UVVector(new NormalVector(p8, 0f, 0f, 0f), 0f, 1f)));
 		// add B
@@ -327,18 +371,53 @@ public class Mesh<T extends Vector> extends TexturesHolder {
 
 	}
 
-	public Mesh<T> cloneRotateClockwise(Vector aroundPoint, double rotateHorizontalRadians) {
-		Mesh<T> m = new Mesh<T>();
-		for (T t : vectors) {
-			m.addVector((T) t.cloneRotateClockwise(aroundPoint, rotateHorizontalRadians));
-		}
-		for (Triangle triangle : polygons) {
-			m.addTriangle(triangle);
-		}
-		for (TextureStage stage : textures.keySet()) {
-			m.setTexture(stage, textures.get(stage));
-		}
-		return m;
+	/**
+	 * Returns the trace of the creation of the {@link Mesh} or <code>null</code> if
+	 * no trace is available!
+	 * 
+	 * @return The create-trace or <code>null</code>.
+	 */
+	public StackTraceElement[] getCreateTrace() {
+		return trace;
+	}
 
+	public void sort() {
+		Map<Triangle, Float> zPolygons = new LinkedHashMap<>();
+		for (Triangle triangle : polygons) {
+			T a = vectors.get(triangle.indiceA);
+			T b = vectors.get(triangle.indiceB);
+			T c = vectors.get(triangle.indiceC);
+			float currY = a.getY() + b.getY() + c.getY();
+			zPolygons.put(triangle, currY);
+		}
+
+		TreeSet<Entry<Triangle, Float>> sortedTriangles = new TreeSet<Map.Entry<Triangle, Float>>(new Comparator<Map.Entry<Triangle, Float>>() {
+
+			@Override
+			public int compare(Entry<Triangle, Float> front, Entry<Triangle, Float> behind) {
+				Float before = front.getValue();
+				Float after = behind.getValue();
+				int compareTo = before.compareTo(after);
+				if (compareTo == 0) {
+					return front.hashCode() - behind.hashCode();
+				}
+				return compareTo;
+			}
+		});
+		synchronized (polygons) {
+			sortedTriangles.addAll(zPolygons.entrySet());
+			this.polygons.clear();
+			int i = 0;
+			for (Entry<Triangle, Float> entry : sortedTriangles) {
+				Triangle key = entry.getKey();
+				T a = vectors.get(key.indiceA);
+				T b = vectors.get(key.indiceB);
+				T c = vectors.get(key.indiceC);
+				System.out.println(++i + "a:" + a + ",b:" + b + ",c:" + c + " - deepness = " + entry.getValue());
+
+				this.polygons.add(entry.getKey());
+			}
+
+		}
 	}
 }

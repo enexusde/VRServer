@@ -10,6 +10,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.management.ManagementFactory;
+import java.lang.management.OperatingSystemMXBean;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -62,8 +64,8 @@ public class VRServer extends ServerSocket {
 	private class ConnectionWorker extends Thread {
 
 		public ConnectionWorker() {
-
 			super(group, "VR-Server connection worker");
+			setPriority(MAX_PRIORITY);
 		}
 
 		private boolean running = true;
@@ -413,6 +415,7 @@ public class VRServer extends ServerSocket {
 	}
 
 	public void removeMesh(Mesh<? extends Vector> meshToRemove) {
+		sessionStorage.removePublishMeshToNewSessions(meshToRemove);
 		synchronized (sessionStorage) {
 			for (VRSession vrSession : sessionStorage) {
 				vrSession.markRemoveMesh(meshToRemove);

@@ -15,7 +15,7 @@ import de.e_nexus.vr.server.osgi.inter.VRServerService;
 public class VRServerServiceDelegate {
 
 	@Inject
-	BundleContext bc = null;
+	protected BundleContext bc = null;
 
 	public VRServer getVRServer() {
 		ServiceReference<VRServerService> ref = bc.getServiceReference(VRServerService.class);

@@ -12,7 +12,7 @@ package de.e_nexus.vr.server.mesh;
  * <p>
  * A texture is an digital image have only two dimensions. Starting at the upper
  * left corner and ending at the lower right coordinate (aka the last
- * coordinate).
+ * pixel).
  * 
  * <p>
  * As a rule of thumb, the coordinates for the texture are not allowed to be

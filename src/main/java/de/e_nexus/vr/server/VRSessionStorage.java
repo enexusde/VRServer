@@ -58,4 +58,8 @@ public class VRSessionStorage extends Vector<VRSession> {
 	public void addPublishMeshToNewSessions(Mesh meshToAdd) {
 		meshesAllExistingMeshesKnow.add(meshToAdd);
 	}
+
+	public void removePublishMeshToNewSessions(Mesh meshToRemove) {
+		meshesAllExistingMeshesKnow.remove(meshToRemove);
+	}
 }

@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.e-nexus</groupId>
 	<artifactId>vr.server</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.1</version>
 	<name>Virtual reality server</name>
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
@@ -38,6 +38,7 @@
 			<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
+				<version>4.2.1</version>
 				<configuration>
 					<instructions>
 						<_cdiannotations>*;discover=annotated</_cdiannotations>

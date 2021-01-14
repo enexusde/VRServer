@@ -14,11 +14,11 @@ public class NormalVector extends Vector {
 
 	protected final Float normalZ;
 
-	public NormalVector(float x, float y, float z, Float normalX, Float normalY, Float normalZ) {
-		super(x, y, z);
-		this.normalX = normalX;
-		this.normalY = normalY;
-		this.normalZ = normalZ;
+	public NormalVector(float right, float up, float forward, Float normalRight, Float normalUp, Float normalForward) {
+		super(right, up, forward);
+		this.normalX = normalRight;
+		this.normalY = normalUp;
+		this.normalZ = normalForward;
 	}
 
 	public NormalVector(Vector defaultVector, Float normalX, Float normalY, Float normalZ) {

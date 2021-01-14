@@ -45,7 +45,7 @@ public class VRServerActivator implements BundleActivator, VRServerService {
 			server.start();
 
 			vrServerReplimentor = ctx.registerService(VRServerService.class, this, new Hashtable<String, String>());
-			System.out.println(" [OK]  @" + new SimpleDateFormat("HH:mm").format(new Date())
+			System.out.println(" [OK]  @" + new SimpleDateFormat("HH:mm:ss").format(new Date())
 					+ " (You might get asked by the firewall if you like to allow java to communicate to other systems. In order to connect the local VR-Client you are requested to grant the communication.)");
 		} catch (BindException e) {
 			System.out.println(" [FAILED]: " + e.getMessage());
